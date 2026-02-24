@@ -3,82 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Italiano Maestro: 120+ SRS 🇮🇹</title>
+    <title>Italiano Pro v3 | SRS</title>
     <style>
         :root {
-            --verde: #008C45; --blanco: #FFFFFF; --rojo: #CD212A; --gris: #333;
-            --bg: #f0f2f5;
+            --verde: #008C45;
+            --rojo: #CD212A;
+            --gris-texto: #2c3e50;
+            --bg-body: #f8fafd;
+            --blanco: #ffffff;
+            --shadow: rgba(149, 157, 165, 0.15) 0px 8px 24px;
         }
+
         body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg);
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--gris-texto);
+            display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; margin: 0; padding: 20px;
+            -webkit-tap-highlight-color: transparent;
         }
-        .header { text-align: center; margin-bottom: 20px; width: 100%; max-width: 450px; }
+
+        /* 1. Header & Progreso */
+        .header { width: 100%; max-width: 400px; margin-bottom: 25px; text-align: center; }
+        .app-title { font-size: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; opacity: 0.8; }
         
-        /* Barra de Progreso Mejorada */
-        .progress-container { 
-            width: 100%; background: #e0e0e0; height: 12px; border-radius: 6px; 
-            margin-top: 15px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .progress-bar { 
-            height: 100%; background: linear-gradient(90deg, #008C45, #28a745); 
-            width: 0%; transition: width 0.4s ease-out; 
+        .progress-wrapper { background: #e0e6ed; height: 10px; border-radius: 20px; overflow: hidden; position: relative; }
+        .progress-fill { 
+            height: 100%; background: linear-gradient(90deg, var(--verde), #2ecc71); 
+            width: 0%; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); 
         }
 
-        .stats { font-size: 0.85rem; color: #555; margin-top: 8px; display: flex; justify-content: space-between; font-weight: bold; }
+        .stats-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: #7f8c8d; }
 
+        /* 2. Tarjeta Principal con Animaciones */
         .card { 
-            width: 100%; max-width: 400px; background: white; border-radius: 20px;
-            padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            text-align: center; margin-bottom: 20px; border-top: 6px solid var(--rojo);
-        }
-        .word-it { font-size: 32px; font-weight: 800; color: var(--gris); margin: 10px 0; }
-        .category { font-size: 11px; text-transform: uppercase; color: #aaa; letter-spacing: 2px; font-weight: bold; }
-        
-        .context-box { 
-            margin-top: 15px; padding: 12px; background: #fff4f4; border-left: 4px solid var(--rojo);
-            border-radius: 8px; font-style: italic; color: #444; font-size: 14px; display: none; text-align: left;
+            width: 100%; max-width: 400px; background: var(--blanco); border-radius: 28px;
+            padding: 40px 30px; box-shadow: var(--shadow); text-align: center;
+            margin-bottom: 25px; position: relative; transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; max-width: 400px; }
+        .category-tag { 
+            background: #f0f3f6; padding: 4px 12px; border-radius: 20px;
+            font-size: 10px; font-weight: 800; color: #95a5a6; letter-spacing: 1px;
+            display: inline-block; margin-bottom: 15px;
+        }
+
+        .word-it { font-size: 38px; font-weight: 800; color: var(--gris-texto); margin: 0 0 10px 0; }
+
+        /* Estilos de Animación */
+        @keyframes successPop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .animate-success { animation: successPop 0.4s ease; }
+        .animate-error { animation: errorShake 0.4s ease; }
+
+        /* 3. Jerarquía Visual: Contexto */
+        .context-bubble { 
+            margin-top: 25px; padding: 18px; background: #f9fbfc; border-radius: 18px;
+            border-left: 4px solid var(--verde); text-align: left; display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        .context-it { font-weight: 700; color: var(--gris-texto); font-size: 0.95rem; margin-bottom: 4px; }
+        .context-es { color: #7f8c8d; font-size: 0.85rem; }
+
+        /* 4. Opciones */
+        .options-container { width: 100%; max-width: 400px; display: grid; gap: 12px; }
         .option-btn {
-            background: white; border: 2px solid #eee; padding: 14px;
-            border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 500; transition: 0.2s;
+            background: var(--blanco); border: 2px solid transparent; padding: 18px;
+            border-radius: 20px; cursor: pointer; font-size: 16px; font-weight: 600;
+            color: var(--gris-texto); box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: all 0.2s ease; text-align: center;
         }
-        .option-btn:hover { border-color: var(--rojo); background: #fffafa; }
-        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46; }
-        .wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
+        .option-btn:active { transform: scale(0.97); }
+        .option-btn:hover { background: #fafbfc; }
 
-        .btn-audio { background: #f8f8f8; border: 1px solid #ddd; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 18px; margin-bottom: 10px; }
-        .reset-btn { margin-top: 30px; font-size: 10px; color: #bbb; cursor: pointer; border: none; background: none; text-decoration: underline; }
+        .btn-correct { background-color: #e8f8f0 !important; border-color: var(--verde) !important; color: var(--verde); }
+        .btn-wrong { background-color: #fdf2f2 !important; border-color: var(--rojo) !important; color: var(--rojo); }
+
+        .audio-btn { 
+            background: #f0f3f6; border: none; width: 50px; height: 50px; 
+            border-radius: 50%; cursor: pointer; font-size: 20px; transition: 0.2s;
+            margin-top: 10px; color: var(--gris-texto);
+        }
+        .audio-btn:hover { background: #e2e8f0; transform: scale(1.1); }
+
+        .reset-link { margin-top: 40px; font-size: 12px; color: #bdc3c7; cursor: pointer; text-decoration: none; border: none; background: none; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2 style="margin:0; color: var(--gris);">🇮🇹 Sfida di Italiano</h2>
-        <div class="progress-container"><div class="progress-bar" id="pb"></div></div>
-        <div class="stats">
-            <span>Dominadas: <b id="mastered-count">0</b></span>
-            <span>Total: <b id="total-words">120</b></span>
+        <div class="app-title">Lingua Master</div>
+        <div class="progress-wrapper">
+            <div class="progress-fill" id="pb"></div>
+        </div>
+        <div class="stats-row">
+            <span>DOMINADAS: <b id="mastered-count" style="color: var(--verde);">0</b></span>
+            <span>OBJETIVO: <b>120</b></span>
         </div>
     </div>
 
-    <div class="card">
-        <div class="category" id="cat-label">CARICANDO...</div>
-        <div class="word-it" id="main-word">---</div>
-        <button class="btn-audio" onclick="speakIt()">🔊</button>
-        <div class="context-box" id="context-box">
-            <div id="phrase-it" style="font-weight: bold; margin-bottom: 5px;"></div>
-            <div id="phrase-es" style="color: #666; font-size: 13px;"></div>
+    <div class="card" id="main-card">
+        <div class="category-tag" id="cat-label">VERBO</div>
+        <div class="word-it" id="main-word">Italiano</div>
+        <button class="audio-btn" onclick="speakIt()">🔊</button>
+        
+        <div class="context-bubble" id="ctx-bubble">
+            <div class="context-it" id="ctx-it">Frase in italiano</div>
+            <div class="context-es" id="ctx-es">Traducción en español</div>
         </div>
     </div>
 
-    <div class="options-grid" id="options-grid"></div>
-    <button class="reset-btn" onclick="resetProgress()">Reiniciar Diccionario</button>
+    <div class="options-container" id="options-grid"></div>
+
+    <button class="reset-link" onclick="resetProgress()">Reiniciar progreso de aprendizaje</button>
 
     <script>
-        // La base de datos de 120 palabras se mantiene igual para no perder contenido
+        // Mismo mazo de 120 palabras (acortado aquí para visibilidad, pero funcional al 100%)
         const rawDeck = [
             {it: "Essere", es: "Ser / Estar", cat: "Verbo", ctx_it: "Lui è molto simpatico.", ctx_es: "Él es muy simpático."},
             {it: "Avere", es: "Tener / Haber", cat: "Verbo", ctx_it: "Quanti anni hai?", ctx_es: "¿Cuántos años tienes?"},
@@ -89,7 +132,7 @@
             {it: "Dovere", es: "Deber / Tener que", cat: "Verbo", ctx_it: "Devo andare a lavorare.", ctx_es: "Tengo que ir a trabajar."},
             {it: "Sapere", es: "Saber", cat: "Verbo", ctx_it: "Non lo so.", ctx_es: "No lo sé."},
             {it: "Stare", es: "Estar", cat: "Verbo", ctx_it: "Come stai oggi?", ctx_es: "¿Cómo estás hoy?"},
-            {it: "Venire", es: "Venir", cat: "Verbo", ctx_it: "Vieni alla festa?", ctx_es: "¿Vienes a la fiesta?"},
+            {it: "Venire", es: "Venir", cat: "Verbo", ctx_it: "Vieni alla festa?", ctx_es: "Vienes a la fiesta?"},
             {it: "Dire", es: "Decir", cat: "Verbo", ctx_it: "Dimmi la verità.", ctx_es: "Dime la verdad."},
             {it: "Dare", es: "Dar", cat: "Verbo", ctx_it: "Mi dai una mano?", ctx_es: "¿Me das una mano?"},
             {it: "Parlare", es: "Hablar", cat: "Verbo", ctx_it: "Parliamo dopo.", ctx_es: "Hablamos después."},
@@ -164,7 +207,7 @@
             {it: "Stanco", es: "Cansado", cat: "Adjetivo", ctx_it: "Sono molto stanco.", ctx_es: "Estoy muy cansado."},
             {it: "Felice", es: "Feliz", cat: "Adjetivo", ctx_it: "Sono felice di vederti.", ctx_es: "Estoy feliz de verte."},
             {it: "Triste", es: "Triste", cat: "Adjetivo", ctx_it: "Perché sei triste?", ctx_es: "¿Por qué estás triste?"},
-            {it: "Caro", es: "Caro", cat: "Adjetivo", ctx_it: "Il ristorante è caro.", ctx_es: "El restaurante es caro."},
+            {it: "Caro", es: "Caro", cat: "Adjetivo", ctx_it: "Il restaurante è caro.", ctx_es: "El restaurante es caro."},
             {it: "Economico", es: "Barato", cat: "Adjetivo", ctx_it: "Un hotel economico.", ctx_es: "Un hotel barato."},
             {it: "Ricco", es: "Rico", cat: "Adjetivo", ctx_it: "Un uomo molto ricco.", ctx_es: "Un hombre muy rico."},
             {it: "Povero", es: "Pobre", cat: "Adjetivo", ctx_it: "Un povero ragazzo.", ctx_es: "Un pobre chico."},
@@ -175,7 +218,7 @@
             {it: "Buonanotte", es: "Buenas noches (dormir)", cat: "Frase", ctx_it: "Buonanotte, a domani.", ctx_es: "Buenas noches, hasta mañana."},
             {it: "Come ti chiami?", es: "¿Cómo te llamas?", cat: "Pregunta", ctx_it: "Ciao, come ti chiami?", ctx_es: "Hola, ¿cómo te llamas?"},
             {it: "Piacere", es: "Mucho gusto", cat: "Frase", ctx_it: "Piacere di conoscerti.", ctx_es: "Mucho gusto en conocerte."},
-            {it: "Dov'è il bagno?", es: "¿Dónde está el baño?", cat: "Pregunta", ctx_it: "Scusi, dov'è il bagno?", ctx_es: "Disculpe, ¿dónde está el baño?"},
+            {it: "Dov'è il baño?", es: "¿Dónde está el baño?", cat: "Pregunta", ctx_it: "Scusi, dov'è il bagno?", ctx_es: "Disculpe, ¿dónde está el baño?"},
             {it: "Quanto costa?", es: "¿Cuánto cuesta?", cat: "Pregunta", ctx_it: "Quanto costa questo pane?", ctx_es: "¿Cuánto cuesta este pan?"},
             {it: "Non capisco", es: "No entiendo", cat: "Frase", ctx_it: "Mi dispiace, non capisco.", ctx_es: "Lo siento, no entiendo."},
             {it: "Può ripetere?", es: "¿Puede repetir?", cat: "Pregunta", ctx_it: "Più piano, può ripetere?", ctx_es: "Más despacio, ¿puede repetir?"},
@@ -198,8 +241,7 @@
             {it: "Peccato", es: "Lástima", cat: "Frase", ctx_it: "Non puoi venire? Che peccato!", ctx_es: "¿No puedes venir? ¡Qué lástima!"}
         ];
 
-        // Cambiamos la clave del localStorage para forzar un reinicio limpio con la corrección
-        let state = JSON.parse(localStorage.getItem('it_master_v2')) || {
+        let state = JSON.parse(localStorage.getItem('it_pro_v3')) || {
             wordStats: rawDeck.map(w => ({...w, score: 0})),
         };
 
@@ -207,37 +249,34 @@
         let canAnswer = true;
 
         function save() {
-            localStorage.setItem('it_master_v2', JSON.stringify(state));
+            localStorage.setItem('it_pro_v3', JSON.stringify(state));
             updateUI();
         }
 
-        // CORRECCIÓN: Función de interfaz que cuenta realmente las palabras
         function updateUI() {
             const total = state.wordStats.length;
             const mastered = state.wordStats.filter(w => w.score >= 4).length;
-            
-            // Actualizar textos
             document.getElementById('mastered-count').innerText = mastered;
-            document.getElementById('total-words').innerText = total;
-            
-            // Actualizar barra de progreso
             const percent = (mastered / total) * 100;
             document.getElementById('pb').style.width = percent + "%";
         }
 
         function getNextWord() {
-            // SRS: Priorizamos palabras con score bajo (< 4)
             let candidates = [...state.wordStats].sort((a, b) => a.score - b.score);
-            let pool = candidates.slice(0, 12); 
+            let pool = candidates.slice(0, 10); 
             return pool[Math.floor(Math.random() * pool.length)];
         }
 
         function renderQuiz() {
             canAnswer = true;
             currentWord = getNextWord();
+            
+            const card = document.getElementById('main-card');
+            card.classList.remove('animate-success', 'animate-error');
+
             document.getElementById('main-word').innerText = currentWord.it;
             document.getElementById('cat-label').innerText = currentWord.cat;
-            document.getElementById('context-box').style.display = 'none';
+            document.getElementById('ctx-bubble').style.display = 'none';
             
             const grid = document.getElementById('options-grid');
             grid.innerHTML = '';
@@ -263,41 +302,43 @@
 
             const isCorrect = (selected === currentWord.es);
             const wordInState = state.wordStats.find(w => w.it === currentWord.it);
+            const card = document.getElementById('main-card');
 
             if (isCorrect) {
-                btn.classList.add('correct');
+                btn.classList.add('btn-correct');
+                card.classList.add('animate-success');
                 wordInState.score += 1;
             } else {
-                btn.classList.add('wrong');
+                btn.classList.add('btn-wrong');
+                card.classList.add('animate-error');
                 wordInState.score = Math.max(0, wordInState.score - 1);
                 Array.from(document.getElementsByClassName('option-btn')).forEach(b => {
-                    if (b.innerText === currentWord.es) b.classList.add('correct');
+                    if (b.innerText === currentWord.es) b.classList.add('btn-correct');
                 });
             }
 
-            document.getElementById('phrase-it').innerText = currentWord.ctx_it;
-            document.getElementById('phrase-es').innerText = currentWord.ctx_es;
-            document.getElementById('context-box').style.display = 'block';
+            document.getElementById('ctx-it').innerText = currentWord.ctx_it;
+            document.getElementById('ctx-es').innerText = currentWord.ctx_es;
+            document.getElementById('ctx-bubble').style.display = 'block';
 
-            save(); // Aquí se dispara updateUI()
-            setTimeout(renderQuiz, isCorrect ? 1600 : 3500);
+            save();
+            setTimeout(renderQuiz, isCorrect ? 1800 : 3800);
         }
 
         function speakIt() {
             const ut = new SpeechSynthesisUtterance(currentWord.it);
             ut.lang = 'it-IT';
-            ut.rate = 0.9;
+            ut.rate = 0.85;
             window.speechSynthesis.speak(ut);
         }
 
         function resetProgress() {
-            if(confirm("¿Estás seguro? Perderás todo el progreso de tus 120 palabras.")) {
-                localStorage.removeItem('it_master_v2');
+            if(confirm("¿Reiniciar todo? Tu memoria técnica se borrará.")) {
+                localStorage.removeItem('it_pro_v3');
                 location.reload();
             }
         }
 
-        // Carga inicial
         updateUI();
         renderQuiz();
     </script>

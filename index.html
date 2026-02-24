@@ -3,179 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Italiano Quiz Pro 🇮🇹</title>
+    <title>Italiano Pro: SRS & Contexto 🇮🇹</title>
     <style>
         :root {
-            --verde: #008C45;
-            --blanco: #FFFFFF;
-            --rojo: #CD212A;
-            --gris: #333;
+            --verde: #008C45; --blanco: #FFFFFF; --rojo: #CD212A; --gris: #333;
+            --bg: #f8f9fa;
         }
-
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            min-height: 100vh; margin: 0; background-color: #f0f4f8; color: var(--gris);
+            font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg);
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px;
         }
+        .header { text-align: center; margin-bottom: 20px; }
+        .stats { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
 
-        .category { margin-bottom: 10px; font-size: 14px; color: #777; text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Estilo Tarjeta */
+        /* Tarjeta */
         .card { 
-            width: 320px; height: 180px; background: var(--blanco);
-            border-radius: 20px; border-bottom: 6px solid var(--verde);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 20px;
-            padding: 20px; position: relative;
+            width: 100%; max-width: 400px; background: white; border-radius: 20px;
+            padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center; margin-bottom: 20px; border-top: 8px solid var(--verde);
         }
-
-        .word-it { font-size: 32px; font-weight: bold; color: var(--verde); margin: 0; }
-
-        /* Opciones de respuesta */
-        .options-container { 
-            display: grid; grid-template-columns: 1fr; gap: 10px; width: 320px; 
-        }
-
-        .option-btn {
-            background: white; border: 2px solid #ddd; padding: 12px;
-            border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: 500;
-            transition: all 0.2s; text-align: center;
-        }
-
-        .option-btn:hover { border-color: var(--verde); background: #f9fffb; }
-        .option-btn.correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; }
-        .option-btn.wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
-
-        /* Controles */
-        .score-board { margin: 20px 0; font-size: 18px; font-weight: bold; }
-        .controls { display: flex; gap: 10px; margin-top: 10px; }
+        .word-it { font-size: 36px; font-weight: bold; color: var(--verde); margin-bottom: 5px; }
+        .category { font-size: 12px; text-transform: uppercase; color: #999; letter-spacing: 2px; }
         
-        button.action {
-            padding: 10px 15px; border-radius: 8px; border: none;
-            background: var(--gris); color: white; cursor: pointer; font-weight: bold;
+        /* Frase de Contexto */
+        .context-box { 
+            margin-top: 15px; padding: 10px; background: #f0fdf4; 
+            border-radius: 10px; font-style: italic; color: #444; font-size: 15px;
+            display: none; /* Se muestra al responder */
         }
 
-        .btn-audio { background: none; border: none; font-size: 24px; cursor: pointer; margin-top: 10px; }
+        /* Opciones */
+        .options-grid { 
+            display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%; max-width: 400px; 
+        }
+        .option-btn {
+            background: white; border: 2px solid #eee; padding: 15px;
+            border-radius: 12px; cursor: pointer; font-size: 16px; transition: 0.2s;
+        }
+        .option-btn:hover { border-color: var(--verde); background: #f0fff4; }
+        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46; font-weight: bold; }
+        .wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
+
+        .btn-audio { 
+            background: #eee; border: none; width: 44px; height: 44px; 
+            border-radius: 50%; cursor: pointer; margin-top: 10px; font-size: 18px;
+        }
+        
+        .reset-btn { margin-top: 40px; font-size: 11px; color: #ccc; cursor: pointer; border: none; background: none; }
     </style>
 </head>
 <body>
 
-    <div class="category" id="category-label">Categoría</div>
-    
+    <div class="header">
+        <h1>Italiano Inteligente</h1>
+        <div class="stats">Palabras dominadas: <span id="mastered-count">0</span> / <span id="total-count">0</span></div>
+    </div>
+
     <div class="card">
-        <p class="word-it" id="word-display">Palabra</p>
-        <button class="btn-audio" onclick="speakIt()" title="Escuchar">🔊</button>
-    </div>
-
-    <div class="options-container" id="options-box">
+        <div class="category" id="cat-label">Verbo</div>
+        <div class="word-it" id="main-word">Caricamento...</div>
+        <button class="btn-audio" onclick="speakIt()">🔊</button>
+        <div class="context-box" id="context-box">
+            <span id="phrase-it"></span><br>
+            <small id="phrase-es" style="color: #888;"></small>
         </div>
-
-    <div class="score-board">Puntos: <span id="score-count">0</span></div>
-
-    <div class="controls">
-        <button class="action" onclick="shuffleCards()">🔀 Mezclar</button>
-        <button class="action" onclick="nextCard()">Siguiente ➡</button>
     </div>
+
+    <div class="options-grid" id="options-grid"></div>
+
+    <button class="reset-btn" onclick="resetProgress()">Reiniciar todo el progreso</button>
 
     <script>
-        const deck = [
-            {it: "Essere", es: "Ser / Estar", cat: "Auxiliar"},
-            {it: "Avere", es: "Tener / Haber", cat: "Auxiliar"},
-            {it: "Fare", es: "Hacer", cat: "Verbo"},
-            {it: "Andare", es: "Ir", cat: "Verbo"},
-            {it: "Mangiare", es: "Comer", cat: "Verbo"},
-            {it: "Bere", es: "Beber", cat: "Verbo"},
-            {it: "Sempre", es: "Siempre", cat: "Adverbio"},
-            {it: "Spesso", es: "A menudo", cat: "Adverbio"},
-            {it: "Domani", es: "Mañana", cat: "Tiempo"},
-            {it: "Oggi", es: "Hoy", cat: "Tiempo"},
-            {it: "La città", es: "La ciudad", cat: "Sustantivo"},
-            {it: "Il lavoro", es: "El trabajo", cat: "Sustantivo"},
-            {it: "Piccolo", es: "Pequeño", cat: "Adjetivo"},
-            {it: "Grande", es: "Grande", cat: "Adjetivo"},
-            {it: "Capire", es: "Entender", cat: "Verbo"},
-            {it: "Scrivere", es: "Escribir", cat: "Verbo"},
-            {it: "Dov'è...", es: "Dónde está...", cat: "Frase"},
-            {it: "Per favore", es: "Por favor", cat: "Cortesía"},
-            {it: "Bello", es: "Bonito", cat: "Adjetivo"},
-            {it: "Stanco", es: "Cansado", cat: "Adjetivo"}
+        // Base de datos con CONTEXTO (Frases)
+        const rawDeck = [
+            {it: "Essere", es: "Ser / Estar", cat: "Auxiliar", ctx_it: "Io sono italiano.", ctx_es: "Yo soy italiano."},
+            {it: "Avere", es: "Tener / Haber", cat: "Auxiliar", ctx_it: "Io ho un libro.", ctx_es: "Yo tengo un libro."},
+            {it: "Prendere", es: "Tomar / Coger", cat: "Verbo", ctx_it: "Prendo un caffè, per favore.", ctx_es: "Tomo un café, por favor."},
+            {it: "Andare", es: "Ir", cat: "Verbo", ctx_it: "Vado a casa adesso.", ctx_es: "Voy a casa ahora."},
+            {it: "Sempre", es: "Siempre", cat: "Adverbio", ctx_it: "Ti amerò per sempre.", ctx_es: "Te amaré por siempre."},
+            {it: "Spesso", es: "A menudo", cat: "Adverbio", ctx_it: "Vado spesso al cinema.", ctx_es: "Voy a menudo al cine."},
+            {it: "Capire", es: "Entender", cat: "Verbo", ctx_it: "Non capisco questa parola.", ctx_es: "No entiendo esta palabra."},
+            {it: "Trovare", es: "Encontrar", cat: "Verbo", ctx_it: "Non trovo le mie chiavi.", ctx_es: "No encuentro mis llaves."},
+            {it: "Dimenticare", es: "Olvidar", cat: "Verbo", ctx_it: "Non dimenticare l'ombrello!", ctx_es: "¡No olvides el paraguas!"},
+            {it: "Mela", es: "Manzana", cat: "Sustantivo", ctx_it: "Mangio una mela rossa.", ctx_es: "Como una manzana roja."},
+            {it: "Macchina", es: "Coche", cat: "Sustantivo", ctx_it: "La mia macchina è vecchia.", ctx_es: "Mi coche es viejo."},
+            {it: "Domani", es: "Mañana", cat: "Tiempo", ctx_it: "Ci vediamo domani mattina.", ctx_es: "Nos vemos mañana por la mañana."}
         ];
 
-        let currentIndex = 0;
-        let score = 0;
-        let words = [...deck];
+        let state = JSON.parse(localStorage.getItem('it_srs_state')) || {
+            wordStats: rawDeck.map(w => ({...w, score: 0})), // score 0 = nueva, alto = dominada
+        };
+
+        let currentWord = null;
         let canAnswer = true;
 
-        function updateCard() {
-            canAnswer = true;
-            const currentWord = words[currentIndex];
-            document.getElementById('word-display').innerText = currentWord.it;
-            document.getElementById('category-label').innerText = currentWord.cat;
-            generateOptions(currentWord);
+        function save() {
+            localStorage.setItem('it_srs_state', JSON.stringify(state));
+            updateStats();
         }
 
-        function generateOptions(correctObj) {
-            const optionsBox = document.getElementById('options-box');
-            optionsBox.innerHTML = '';
-            
-            // Crear lista de opciones (la correcta + 3 falsas)
-            let choices = [correctObj.es];
-            let pool = deck.filter(w => w.es !== correctObj.es);
-            
-            // Mezclar pool y sacar 3
-            pool.sort(() => 0.5 - Math.random());
-            choices.push(pool[0].es, pool[1].es, pool[2].es);
-            
-            // Mezclar las 4 opciones finales
-            choices.sort(() => 0.5 - Math.random());
+        function updateStats() {
+            const mastered = state.wordStats.filter(w => w.score >= 3).length;
+            document.getElementById('mastered-count').innerText = mastered;
+            document.getElementById('total-count').innerText = state.wordStats.length;
+        }
 
-            choices.forEach(choice => {
+        function getNextWord() {
+            // LÓGICA SRS: Ordenamos por score (las de menor score salen primero)
+            // Añadimos un poco de aleatoriedad entre las 5 con menor puntuación
+            let pool = [...state.wordStats].sort((a, b) => a.score - b.score).slice(0, 5);
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function renderQuiz() {
+            canAnswer = true;
+            currentWord = getNextWord();
+            document.getElementById('main-word').innerText = currentWord.it;
+            document.getElementById('cat-label').innerText = currentWord.cat;
+            document.getElementById('context-box').style.display = 'none';
+            
+            // Generar opciones
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            let choices = [currentWord.es];
+            let distractors = rawDeck.filter(d => d.es !== currentWord.es)
+                                     .sort(() => 0.5 - Math.random())
+                                     .slice(0, 3)
+                                     .map(d => d.es);
+            
+            choices = [...choices, ...distractors].sort(() => 0.5 - Math.random());
+
+            choices.forEach(text => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.innerText = choice;
-                btn.onclick = () => checkAnswer(btn, choice, correctObj.es);
-                optionsBox.appendChild(btn);
+                btn.innerText = text;
+                btn.onclick = () => checkAnswer(btn, text);
+                grid.appendChild(btn);
             });
         }
 
-        function checkAnswer(btn, selected, correct) {
+        function checkAnswer(btn, selected) {
             if (!canAnswer) return;
             canAnswer = false;
 
-            if (selected === correct) {
+            const isCorrect = (selected === currentWord.es);
+            
+            // Actualizar SRS Score
+            const wordInState = state.wordStats.find(w => w.it === currentWord.it);
+            if (isCorrect) {
                 btn.classList.add('correct');
-                score += 10;
-                document.getElementById('score-count').innerText = score;
-                setTimeout(nextCard, 1000); // Salta a la siguiente tras un segundo
+                wordInState.score += 1;
             } else {
                 btn.classList.add('wrong');
-                // Mostrar cuál era la correcta
+                wordInState.score = Math.max(0, wordInState.score - 2); // Castigo por error
+                // Mostrar correcta
                 Array.from(document.getElementsByClassName('option-btn')).forEach(b => {
-                    if (b.innerText === correct) b.classList.add('correct');
+                    if (b.innerText === currentWord.es) b.classList.add('correct');
                 });
-                setTimeout(nextCard, 2000);
             }
-        }
 
-        function nextCard() {
-            currentIndex = (currentIndex + 1) % words.length;
-            updateCard();
-        }
+            // Mostrar Contexto
+            document.getElementById('phrase-it').innerText = currentWord.ctx_it;
+            document.getElementById('phrase-es').innerText = currentWord.ctx_es;
+            document.getElementById('context-box').style.display = 'block';
 
-        function shuffleCards() {
-            words.sort(() => 0.5 - Math.random());
-            currentIndex = 0;
-            updateCard();
+            save();
+            setTimeout(renderQuiz, isCorrect ? 1800 : 3500); // Más tiempo si falla para leer contexto
         }
 
         function speakIt() {
-            const utterance = new SpeechSynthesisUtterance(words[currentIndex].it);
-            utterance.lang = 'it-IT';
-            window.speechSynthesis.speak(utterance);
+            const ut = new SpeechSynthesisUtterance(currentWord.it);
+            ut.lang = 'it-IT';
+            window.speechSynthesis.speak(ut);
         }
 
-        // Iniciar
-        updateCard();
+        function resetProgress() {
+            if(confirm("¿Seguro que quieres borrar todo tu progreso?")) {
+                localStorage.removeItem('it_srs_state');
+                location.reload();
+            }
+        }
+
+        // Inicio
+        updateStats();
+        renderQuiz();
     </script>
 </body>
 </html>

@@ -6,8 +6,12 @@
     <title>Italiano Accademia | Home</title>
     <style>
         :root {
-            --verde: #008C45; --blanco: #ffffff; --oscuro: #2c3e50;
-            --bg: #f4f7f9; --shadow: rgba(0,0,0,0.08) 0px 10px 30px;
+            --verde: #008C45; 
+            --blanco: #ffffff; 
+            --oscuro: #2c3e50;
+            --azul: #3498db;
+            --bg: #f4f7f9; 
+            --shadow: rgba(0,0,0,0.08) 0px 10px 30px;
         }
         body { 
             font-family: 'SF Pro Display', system-ui, sans-serif; 
@@ -20,7 +24,8 @@
         .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
         
         .welcome-section { margin-bottom: 40px; text-align: center; }
-        .welcome-section h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .welcome-section h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--oscuro); }
+        .welcome-section p { color: #7f8c8d; font-size: 1.1rem; }
 
         /* Grid de Módulos */
         .modules-grid {
@@ -31,61 +36,83 @@
 
         .module-card {
             background: var(--blanco); border-radius: 24px; padding: 30px;
-            box-shadow: var(--shadow); transition: transform 0.3s ease;
+            box-shadow: var(--shadow); transition: all 0.3s ease;
             text-decoration: none; color: inherit; display: flex;
             flex-direction: column; align-items: flex-start;
             position: relative; overflow: hidden;
+            border: 2px solid transparent;
         }
-        .module-card:hover { transform: translateY(-10px); }
-        .module-card.locked { opacity: 0.7; cursor: not-allowed; filter: grayscale(1); }
         
-        .icon { font-size: 40px; margin-bottom: 15px; }
+        /* Efecto de hover mejorado */
+        .module-card:hover { 
+            transform: translateY(-8px); 
+            border-color: rgba(52, 152, 219, 0.2);
+            box-shadow: rgba(52, 152, 219, 0.15) 0px 20px 40px;
+        }
+
+        .module-card.locked { 
+            opacity: 0.7; 
+            cursor: not-allowed; 
+            filter: grayscale(1); 
+        }
+        .module-card.locked:hover { transform: none; border-color: transparent; }
+        
+        .icon { font-size: 45px; margin-bottom: 15px; }
         .module-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
-        .module-desc { font-size: 0.95rem; color: #7f8c8d; line-height: 1.4; }
+        .module-desc { font-size: 0.95rem; color: #7f8c8d; line-height: 1.5; }
         
         .badge {
-            background: var(--verde); color: white; padding: 5px 12px;
-            border-radius: 20px; font-size: 0.7rem; font-weight: bold;
-            margin-top: 15px; text-transform: uppercase;
+            background: var(--verde); color: white; padding: 6px 14px;
+            border-radius: 20px; font-size: 0.75rem; font-weight: bold;
+            margin-top: auto; text-transform: uppercase; letter-spacing: 0.5px;
         }
+        
+        .badge-blue { background: var(--azul); }
+
         .locked-tag {
             position: absolute; top: 15px; right: 15px;
             font-size: 0.7rem; font-weight: bold; color: #bdc3c7;
+            background: #f1f3f5; padding: 4px 8px; border-radius: 6px;
+        }
+
+        @media (max-width: 600px) {
+            .welcome-section h1 { font-size: 2rem; }
+            .modules-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <h2 style="margin:0; letter-spacing: 1px;">🇮🇹 ITALIANO ACADEMIA</h2>
+        <h2 style="margin:0; letter-spacing: 1px; font-weight: 900;">🇮🇹 ITALIANO ACCADEMIA</h2>
     </nav>
 
     <div class="container">
         <div class="welcome-section">
             <h1>Ciao, Studente! 👋</h1>
-            <p>¿Qué quieres practicar hoy para dominar el italiano?</p>
+            <p>Selecciona una unidad de entrenamiento para empezar:</p>
         </div>
 
         <div class="modules-grid">
             <a href="tarjetas.html" class="module-card">
                 <div class="icon">🗂️</div>
                 <div class="module-title">Vocabulario SRS</div>
-                <div class="module-desc">Domina las 120 palabras más usadas con repetición espaciada.</div>
-                <div class="badge">Disponible</div>
+                <div class="module-desc">Aprende las 120 palabras clave con el sistema de repetición espaciada.</div>
+                <div class="badge">Práctica Activa</div>
             </a>
 
-            <div class="module-card locked">
-                <span class="locked-tag">PRÓXIMAMENTE</span>
+            <a href="conjugacion.html" class="module-card">
                 <div class="icon">🗣️</div>
                 <div class="module-title">Conjugador Pro</div>
-                <div class="module-desc">Entrena los verbos en presente, pasado y futuro de forma dinámica.</div>
-            </div>
+                <div class="module-desc">Domina los verbos en presente (-ARE, -ERE, -IRE) con nuestra fábrica interactiva.</div>
+                <div class="badge badge-blue">Nuevo Módulo</div>
+            </a>
 
             <div class="module-card locked">
                 <span class="locked-tag">PRÓXIMAMENTE</span>
                 <div class="icon">📚</div>
                 <div class="module-title">Guías Visuales</div>
-                <div class="module-desc">Fichas rápidas sobre artículos, preposiciones y estructura.</div>
+                <div class="module-desc">Fichas rápidas para entender artículos, géneros y preposiciones de un vistazo.</div>
             </div>
         </div>
     </div>

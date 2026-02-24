@@ -10,11 +10,12 @@
             --blanco: #ffffff; 
             --oscuro: #2c3e50;
             --azul: #3498db;
+            --oro: #f39c12;
             --bg: #f4f7f9; 
             --shadow: rgba(0,0,0,0.08) 0px 10px 30px;
         }
         body { 
-            font-family: 'SF Pro Display', system-ui, sans-serif; 
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
             background: var(--bg); margin: 0; color: var(--oscuro);
         }
         .navbar {
@@ -24,7 +25,7 @@
         .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
         
         .welcome-section { margin-bottom: 40px; text-align: center; }
-        .welcome-section h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--oscuro); }
+        .welcome-section h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--oscuro); font-weight: 800; }
         .welcome-section p { color: #7f8c8d; font-size: 1.1rem; }
 
         /* Grid de Módulos */
@@ -35,45 +36,36 @@
         }
 
         .module-card {
-            background: var(--blanco); border-radius: 24px; padding: 30px;
-            box-shadow: var(--shadow); transition: all 0.3s ease;
+            background: var(--blanco); border-radius: 28px; padding: 30px;
+            box-shadow: var(--shadow); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             text-decoration: none; color: inherit; display: flex;
             flex-direction: column; align-items: flex-start;
             position: relative; overflow: hidden;
             border: 2px solid transparent;
+            height: 100%;
+            box-sizing: border-box;
         }
         
-        /* Efecto de hover mejorado */
         .module-card:hover { 
             transform: translateY(-8px); 
-            border-color: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.3);
             box-shadow: rgba(52, 152, 219, 0.15) 0px 20px 40px;
         }
 
-        .module-card.locked { 
-            opacity: 0.7; 
-            cursor: not-allowed; 
-            filter: grayscale(1); 
-        }
-        .module-card.locked:hover { transform: none; border-color: transparent; }
-        
-        .icon { font-size: 45px; margin-bottom: 15px; }
-        .module-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
-        .module-desc { font-size: 0.95rem; color: #7f8c8d; line-height: 1.5; }
+        .icon { font-size: 45px; margin-bottom: 18px; }
+        .module-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; }
+        .module-desc { font-size: 0.95rem; color: #7f8c8d; line-height: 1.5; margin-bottom: 20px; }
         
         .badge {
-            background: var(--verde); color: white; padding: 6px 14px;
+            background: #f1f3f5; color: #7f8c8d; padding: 6px 14px;
             border-radius: 20px; font-size: 0.75rem; font-weight: bold;
             margin-top: auto; text-transform: uppercase; letter-spacing: 0.5px;
         }
         
-        .badge-blue { background: var(--azul); }
-
-        .locked-tag {
-            position: absolute; top: 15px; right: 15px;
-            font-size: 0.7rem; font-weight: bold; color: #bdc3c7;
-            background: #f1f3f5; padding: 4px 8px; border-radius: 6px;
-        }
+        /* Variantes de Color para Badges */
+        .badge-active { background: var(--verde); color: white; }
+        .badge-new { background: var(--azul); color: white; }
+        .badge-study { background: var(--oro); color: white; }
 
         @media (max-width: 600px) {
             .welcome-section h1 { font-size: 2rem; }
@@ -84,36 +76,36 @@
 <body>
 
     <nav class="navbar">
-        <h2 style="margin:0; letter-spacing: 1px; font-weight: 900;">🇮🇹 ITALIANO ACCADEMIA</h2>
+        <h2 style="margin:0; letter-spacing: 1px; font-weight: 900; color: var(--oscuro);">🇮🇹 ITALIANO ACCADEMIA</h2>
     </nav>
 
     <div class="container">
         <div class="welcome-section">
             <h1>Ciao, Studente! 👋</h1>
-            <p>Selecciona una unidad de entrenamiento para empezar:</p>
+            <p>Tu camino hacia la fluidez comienza aquí. Elige una sección:</p>
         </div>
 
         <div class="modules-grid">
             <a href="tarjetas.html" class="module-card">
                 <div class="icon">🗂️</div>
                 <div class="module-title">Vocabulario SRS</div>
-                <div class="module-desc">Aprende las 120 palabras clave con el sistema de repetición espaciada.</div>
-                <div class="badge">Práctica Activa</div>
+                <div class="module-desc">Domina las 120 palabras más usadas con nuestro sistema de repetición inteligente.</div>
+                <div class="badge badge-active">Entrenar ahora</div>
             </a>
 
             <a href="conjugacion.html" class="module-card">
                 <div class="icon">🗣️</div>
                 <div class="module-title">Conjugador Pro</div>
-                <div class="module-desc">Domina los verbos en presente (-ARE, -ERE, -IRE) con nuestra fábrica interactiva.</div>
-                <div class="badge badge-blue">Nuevo Módulo</div>
+                <div class="module-desc">Aprende a conjugar verbos en presente (-ARE, -ERE, -IRE) de forma mecánica y rápida.</div>
+                <div class="badge badge-new">Nuevo Módulo</div>
             </a>
 
-            <div class="module-card locked">
-                <span class="locked-tag">PRÓXIMAMENTE</span>
+            <a href="gramatica.html" class="module-card">
                 <div class="icon">📚</div>
                 <div class="module-title">Guías Visuales</div>
-                <div class="module-desc">Fichas rápidas para entender artículos, géneros y preposiciones de un vistazo.</div>
-            </div>
+                <div class="module-desc">Entiende las reglas complejas como los artículos y preposiciones con fichas visuales.</div>
+                <div class="badge badge-study">Consultar guía</div>
+            </a>
         </div>
     </div>
 

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Flashcards de Italiano 🇮🇹</title>
+    <style>
+        :root {
+            --verde: #008C45;
+            --blanco: #FFFFFF;
+            --rojo: #CD212A;
+            --gris-oscuro: #333;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            background-color: #f4f7f6; 
+            color: var(--gris-oscuro);
+        }
+
+        .category { 
+            margin-bottom: 10px; 
+            font-size: 14px; 
+            color: #777; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-weight: bold; 
+        }
+
+        .card-container { 
+            perspective: 1000px; 
+            width: 320px; 
+            height: 220px; 
+            cursor: pointer; 
+            margin: 10px;
+        }
+
+        .card { 
+            width: 100%; 
+            height: 100%; 
+            position: relative; 
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            transform-style: preserve-3d; 
+            border-radius: 20px; 
+        }
+
+        .card.is-flipped { transform: rotateY(180deg); }
+
+        .card-face { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            backface-visibility: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 20px; 
+            font-size: 28px; 
+            font-weight: bold; 
+            text-align: center; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
+        }
+
+        .card-front { 
+            background-color: var(--blanco); 
+            color: var(--verde); 
+            border: 6px solid var(--verde); 
+        }
+
+        .card-back { 
+            background-color: var(--rojo); 
+            color: white; 
+            transform: rotateY(180deg); 
+            border: 6px solid var(--rojo); 
+        }
+
+        .counter { margin-top: 10px; font-size: 0.9em; color: #666; }
+        
+        .score-board {
+            margin: 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--verde);
+            background: #e8f5e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .controls { 
+            margin-top: 20px; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            width: 320px;
+        }
+
+        button { 
+            padding: 12px; 
+            font-size: 14px; 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 10px; 
+            background-color: var(--gris-oscuro); 
+            color: white; 
+            transition: all 0.2s; 
+            font-weight: bold; 
+        }
+
+        button:active { transform: scale(0.95); }
+        
+        .btn-shuffle { background-color: #007bff; grid-column: span 2; }
+        .btn-success { background-color: #28a745; grid-column: span 2; margin-top: 5px; font-size: 16px; }
+        .btn-nav { background-color: #6c757d; }
+
+        @media (max-width: 400px) {
+            .card-container { width: 90vw; }
+            .controls { width: 90vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="category" id="category-label">Categoría</div>
+    
+    <div class="card-container" onclick="flipCard()">
+        <div class="card" id="card">
+            <div class="card-face card-front" id="front-text">Italiano</div>
+            <div class="card-face card-back" id="back-text">Español</div>
+        </div>
+    </div>
+
+    <div class="counter" id="card-counter">Tarjeta 1 de ...</div>
+    <div class="score-board">Aciertos: <span id="score-count">0</span></div>
+
+    <div class="controls">
+        <button class="btn-nav" onclick="prevCard()">⬅ Anterior</button>
+        <button class="btn-nav" onclick="nextCard()">Siguiente ➡</button>
+        <button class="btn-shuffle" onclick="shuffleCards()">🔀 Mezclar Mazo</button>
+        <button class="btn-success" onclick="markAsKnown()">✅ ¡Me la sabía!</button>
+    </div>
+
+    <script>
+        const deck = [
+            // VERBOS ESENCIALES
+            {it: "Essere", es: "Ser / Estar", cat: "Auxiliar"},
+            {it: "Avere", es: "Tener / Haber", cat: "Auxiliar"},
+            {it: "Fare", es: "Hacer", cat: "Verbo"},
+            {it: "Andare", es: "Ir", cat: "Verbo"},
+            {it: "Potere", es: "Poder", cat: "Modal"},
+            {it: "Volere", es: "Querer", cat: "Modal"},
+            {it: "Dovere", es: "Deber / Tener que", cat: "Modal"},
+            {it: "Sapere", es: "Saber", cat: "Verbo"},
+            {it: "Stare", es: "Estar", cat: "Verbo"},
+            {it: "Prendere", es: "Tomar / Coger", cat: "Verbo"},
+            {it: "Vedere", es: "Ver", cat: "Verbo"},
+            {it: "Parlare", es: "Hablar", cat: "Verbo"},
+            {it: "Mangiare", es: "Comer", cat: "Verbo"},
+            {it: "Bere", es: "Beber", cat: "Verbo"},
+            {it: "Dormire", es: "Dormir", cat: "Verbo"},
+            {it: "Capire", es: "Entender", cat: "Verbo"},
+            {it: "Uscire", es: "Salir", cat: "Verbo"},
+            {it: "Chiedere", es: "Preguntar / Pedir", cat: "Verbo"},
+            {it: "Mettere", es: "Poner", cat: "Verbo"},
+            {it: "Trovare", es: "Encontrar", cat: "Verbo"},
+            
+            // FRASES ÚTILES
+            {it: "Come va?", es: "¿Cómo va?", cat: "Frase"},
+            {it: "A presto", es: "Hasta pronto", cat: "Frase"},
+            {it: "Dov'è...", es: "Dónde está...", cat: "Pregunta"},
+            {it: "Mi dispiace", es: "Lo siento", cat: "Frase"},
+            {it: "Non lo so", es: "No lo sé", cat: "Frase"},
+            {it: "Che ore sono?", es: "¿Qué hora es?", cat: "Pregunta"},
+            {it: "Ho bisogno di...", es: "Necesito...", cat: "Frase"},
+            {it: "Per favore", es: "Por favor", cat: "Cortesía"},
+            {it: "Grazie mille", es: "Muchas gracias", cat: "Cortesía"},
+            
+            // SUSTANTIVOS
+            {it: "La città", es: "La ciudad", cat: "Sustantivo"},
+            {it: "Il lavoro", es: "El trabajo", cat: "Sustantivo"},
+            {it: "La strada", es: "La calle", cat: "Sustantivo"},
+            {it: "La macchina", es: "El coche", cat: "Sustantivo"},
+            {it: "I soldi", es: "El dinero", cat: "Sustantivo"},
+            {it: "Il cibo", es: "La comida", cat: "Sustantivo"},
+            {it: "La famiglia", es: "La familia", cat: "Sustantivo"},
+            {it: "Il tempo", es: "El tiempo", cat: "Sustantivo"},
+            {it: "La casa", es: "La casa", cat: "Sustantivo"},
+            {it: "Il giornale", es: "El periódico", cat: "Sustantivo"},
+
+            // TIEMPO Y ADVERBIOS
+            {it: "Oggi", es: "Hoy", cat: "Tiempo"},
+            {it: "Domani", es: "Mañana", cat: "Tiempo"},
+            {it: "Ieri", es: "Ayer", cat: "Tiempo"},
+            {it: "Sempre", es: "Siempre", cat: "Adverbio"},
+            {it: "Mai", es: "Nunca", cat: "Adverbio"},
+            {it: "Forse", es: "Quizás", cat: "Adverbio"},
+            {it: "Spesso", es: "A menudo", cat: "Adverbio"},
+            {it: "Adesso", es: "Ahora", cat: "Tiempo"},
+            {it: "Dopo", es: "Después", cat: "Tiempo"},
+            {it: "Prima", es: "Antes", cat: "Tiempo"},
+
+            // ADJETIVOS
+            {it: "Bello", es: "Bello / Guapo", cat: "Adjetivo"},
+            {it: "Grande", es: "Grande", cat: "Adjetivo"},
+            {it: "Piccolo", es: "Pequeño", cat: "Adjetivo"},
+            {it: "Veloce", es: "Rápido", cat: "Adjetivo"},
+            {it: "Lento", es: "Lento", cat: "Adjetivo"},
+            {it: "Nuovo", es: "Nuevo", cat: "Adjetivo"},
+            {it: "Vecchio", es: "Viejo", cat: "Adjetivo"},
+            {it: "Caro", es: "Caro / Querido", cat: "Adjetivo"},
+            {it: "Economico", es: "Barato", cat: "Adjetivo"},
+            {it: "Stanco", es: "Cansado", cat: "Adjetivo"},
+
+            // VERBOS UN POCO MÁS AVANZADOS
+            {it: "Scegliere", es: "Elegir", cat: "Verbo"},
+            {it: "Viaggiare", es: "Viajar", cat: "Verbo"},
+            {it: "Dimenticare", es: "Olvidar", cat: "Verbo"},
+            {it: "Ricordare", es: "Recordar", cat: "Verbo"},
+            {it: "Comprare", es: "Comprar", cat: "Verbo"},
+            {it: "Pagare", es: "Pagar", cat: "Verbo"},
+            {it: "Leggere", es: "Leer", cat: "Verbo"},
+            {it: "Scrivere", es: "Escribir", cat: "Verbo"},
+            {it: "Aiutare", es: "Ayudar", cat: "Verbo"},
+            {it: "Cercare", es: "Buscar", cat: "Verbo"},
+            {it: "Aspettare", es: "Esperar", cat: "Verbo"}
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let words = [...deck];
+
+        const card = document.getElementById('card');
+        const frontText = document.getElementById('front-text');
+        const backText = document.getElementById('back-text');
+        const categoryLabel = document.getElementById('category-label');
+        const cardCounter = document.getElementById('card-counter');
+        const scoreDisplay = document.getElementById('score-count');
+
+        function flipCard() {
+            card.classList.toggle('is-flipped');
+        }
+
+        function updateCard() {
+            card.classList.remove('is-flipped');
+            setTimeout(() => {
+                frontText.innerText = words[currentIndex].it;
+                backText.innerText = words[currentIndex].es;
+                categoryLabel.innerText = words[currentIndex].cat;
+                cardCounter.innerText = `Tarjeta ${currentIndex + 1} de ${words.length}`;
+            }, 150);
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % words.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + words.length) % words.length;
+            updateCard();
+        }
+
+        function shuffleCards() {
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]];
+            }
+            currentIndex = 0;
+            updateCard();
+        }
+
+        function markAsKnown() {
+            score++;
+            scoreDisplay.innerText = score;
+            nextCard();
+        }
+
+        // Iniciar
+        updateCard();
+    </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conjugador Pro | Italiano Accademia</title>
+    <style>
+        :root {
+            --azul: #3498db; --verde: #2ecc71; --rojo: #e74c3c;
+            --oscuro: #2c3e50; --bg: #f4f7f9; --blanco: #ffffff;
+        }
+        body { 
+            font-family: 'SF Pro Display', system-ui, sans-serif; 
+            background: var(--bg); margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .back-link { text-decoration: none; color: var(--azul); font-weight: bold; font-size: 0.9rem; }
+
+        /* Consola de Conjugación */
+        .conjugation-card {
+            width: 100%; max-width: 500px; background: var(--blanco); border-radius: 30px;
+            padding: 40px 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            text-align: center; margin-bottom: 25px; border: 2px solid #edf2f7;
+        }
+
+        .subject-display { font-size: 1.2rem; color: #95a5a6; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+        .verb-display { font-size: 3rem; font-weight: 900; color: var(--oscuro); margin: 10px 0; }
+        .verb-display span { color: var(--azul); } /* Resaltar raíz */
+
+        .instruction { font-size: 1rem; color: #7f8c8d; margin-bottom: 30px; }
+
+        /* Botones de Desinencias */
+        .ending-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            width: 100%; max-width: 400px;
+        }
+        .ending-btn {
+            background: var(--blanco); border: 2px solid #edf2f7; padding: 20px;
+            border-radius: 20px; font-size: 1.2rem; font-weight: 800; color: var(--oscuro);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .ending-btn:hover { border-color: var(--azul); background: #f0f7ff; }
+        .ending-btn.correct { background: var(--verde) !important; color: white !important; border-color: var(--verde) !important; }
+        .ending-btn.wrong { background: var(--rojo) !important; color: white !important; border-color: var(--rojo) !important; }
+
+        /* Selector de Tipo de Verbo */
+        .type-selector { display: flex; gap: 10px; margin-bottom: 20px; }
+        .type-btn {
+            padding: 8px 16px; border-radius: 12px; border: none; background: #e2e8f0;
+            font-weight: bold; cursor: pointer; color: #64748b;
+        }
+        .type-btn.active { background: var(--oscuro); color: white; }
+
+        @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .success-anim { animation: jump 0.4s ease; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="index.html" class="back-link">← Salir al Dashboard</a>
+        <div id="streak-counter" style="font-weight: 800; color: #f39c12;">🔥 Racha: 0</div>
+    </div>
+
+    <div class="type-selector">
+        <button class="type-btn active" onclick="setGroup('are', this)">-ARE</button>
+        <button class="type-btn" onclick="setGroup('ere', this)">-ERE</button>
+        <button class="type-btn" onclick="setGroup('ire', this)">-IRE</button>
+    </div>
+
+    <div class="conjugation-card" id="game-card">
+        <div class="subject-display" id="subject-txt">IO</div>
+        <div class="verb-display" id="verb-txt">PARL<span>ARE</span></div>
+        <div class="instruction">Selecciona la terminación correcta:</div>
+
+        <div class="ending-grid" id="ending-grid">
+            </div>
+    </div>
+
+    <script>
+        const verbs = {
+            are: [
+                { inf: "Parlare", root: "Parl", es: "Hablar" },
+                { inf: "Mangiare", root: "Mangi", es: "Comer" },
+                { inf: "Lavorare", root: "Lavor", es: "Trabajar" },
+                { inf: "Aspettare", root: "Aspett", es: "Esperar" }
+            ],
+            ere: [
+                { inf: "Prendere", root: "Prend", es: "Tomar" },
+                { inf: "Leggere", root: "Legg", es: "Leer" },
+                { inf: "Scrivere", root: "Scriv", es: "Escribir" },
+                { inf: "Vivere", root: "Viv", es: "Vivir" }
+            ],
+            ire: [
+                { inf: "Dormire", root: "Dorm", es: "Dormir" },
+                { inf: "Partire", root: "Part", es: "Partir" },
+                { inf: "Sentire", root: "Sent", es: "Sentir" },
+                { inf: "Aprire", root: "Apr", es: "Abrir" }
+            ]
+        };
+
+        const subjects = [
+            { id: 0, name: "Io", end: { are: "o", ere: "o", ire: "o" } },
+            { id: 1, name: "Tu", end: { are: "i", ere: "i", ire: "i" } },
+            { id: 2, name: "Lui / Lei", end: { are: "a", ere: "e", ire: "e" } },
+            { id: 3, name: "Noi", end: { are: "iamo", ere: "iamo", ire: "iamo" } },
+            { id: 4, name: "Voi", end: { are: "ate", ere: "ete", ire: "ite" } },
+            { id: 5, name: "Loro", end: { are: "ano", ere: "ono", ire: "ono" } }
+        ];
+
+        let currentGroup = 'are';
+        let currentVerb = {};
+        let currentSubject = {};
+        let streak = 0;
+        let canPlay = true;
+
+        function setGroup(group, btn) {
+            currentGroup = group;
+            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            initGame();
+        }
+
+        function initGame() {
+            canPlay = true;
+            const groupVerbs = verbs[currentGroup];
+            currentVerb = groupVerbs[Math.floor(Math.random() * groupVerbs.length)];
+            currentSubject = subjects[Math.floor(Math.random() * subjects.length)];
+
+            document.getElementById('subject-txt').innerText = currentSubject.name;
+            document.getElementById('verb-txt').innerHTML = `${currentVerb.root}<span>${currentGroup.toUpperCase()}</span>`;
+            document.getElementById('game-card').classList.remove('success-anim');
+
+            renderButtons();
+        }
+
+        function renderButtons() {
+            const grid = document.getElementById('ending-grid');
+            grid.innerHTML = '';
+            
+            const correctEnding = currentSubject.end[currentGroup];
+            
+            // Crear opciones (la correcta + 3 distractoras del mismo grupo)
+            let options = [correctEnding];
+            let allEndings = subjects.map(s => s.end[currentGroup]);
+            let distractors = allEndings.filter(e => e !== correctEnding);
+            distractors = [...new Set(distractors)].sort(() => 0.5 - Math.random());
+            
+            options.push(...distractors.slice(0, 3));
+            options.sort(() => 0.5 - Math.random());
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'ending-btn';
+                btn.innerText = `-${opt}`;
+                btn.onclick = () => checkAnswer(btn, opt, correctEnding);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            if (!canPlay) return;
+            canPlay = false;
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                document.getElementById('game-card').classList.add('success-anim');
+                streak++;
+                setTimeout(initGame, 1200);
+            } else {
+                btn.classList.add('wrong');
+                streak = 0;
+                // Resaltar la correcta
+                Array.from(document.getElementsByClassName('ending-btn')).forEach(b => {
+                    if (b.innerText === `-${correct}`) b.classList.add('correct');
+                });
+                setTimeout(initGame, 2500);
+            }
+            document.getElementById('streak-counter').innerText = `🔥 Racha: ${streak}`;
+        }
+
+        initGame();
+    </script>
+</body>
+</html>

@@ -3,115 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Italiano Pro: SRS & Contexto 🇮🇹</title>
+    <title>Italiano Maestro: 120+ SRS 🇮🇹</title>
     <style>
         :root {
             --verde: #008C45; --blanco: #FFFFFF; --rojo: #CD212A; --gris: #333;
-            --bg: #f8f9fa;
+            --bg: #f0f2f5;
         }
         body { 
-            font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg);
+            font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg);
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px;
         }
-        .header { text-align: center; margin-bottom: 20px; }
-        .stats { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
+        .header { text-align: center; margin-bottom: 20px; width: 100%; max-width: 450px; }
+        .progress-container { width: 100%; background: #ddd; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--verde); width: 0%; transition: width 0.5s; }
+        .stats { font-size: 0.85rem; color: #555; margin-top: 5px; display: flex; justify-content: space-between; }
 
-        /* Tarjeta */
         .card { 
             width: 100%; max-width: 400px; background: white; border-radius: 20px;
-            padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center; margin-bottom: 20px; border-top: 8px solid var(--verde);
+            padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            text-align: center; margin-bottom: 20px; border-top: 6px solid var(--rojo);
         }
-        .word-it { font-size: 36px; font-weight: bold; color: var(--verde); margin-bottom: 5px; }
-        .category { font-size: 12px; text-transform: uppercase; color: #999; letter-spacing: 2px; }
+        .word-it { font-size: 32px; font-weight: 800; color: var(--gris); margin: 10px 0; }
+        .category { font-size: 11px; text-transform: uppercase; color: #aaa; letter-spacing: 2px; font-weight: bold; }
         
-        /* Frase de Contexto */
         .context-box { 
-            margin-top: 15px; padding: 10px; background: #f0fdf4; 
-            border-radius: 10px; font-style: italic; color: #444; font-size: 15px;
-            display: none; /* Se muestra al responder */
+            margin-top: 15px; padding: 12px; background: #fff4f4; border-left: 4px solid var(--rojo);
+            border-radius: 8px; font-style: italic; color: #444; font-size: 14px; display: none; text-align: left;
         }
 
-        /* Opciones */
-        .options-grid { 
-            display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%; max-width: 400px; 
-        }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; max-width: 400px; }
         .option-btn {
-            background: white; border: 2px solid #eee; padding: 15px;
-            border-radius: 12px; cursor: pointer; font-size: 16px; transition: 0.2s;
+            background: white; border: 2px solid #eee; padding: 14px;
+            border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 500; transition: 0.2s;
         }
-        .option-btn:hover { border-color: var(--verde); background: #f0fff4; }
-        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46; font-weight: bold; }
+        .option-btn:hover { border-color: var(--rojo); background: #fffafa; }
+        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46; }
         .wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
 
-        .btn-audio { 
-            background: #eee; border: none; width: 44px; height: 44px; 
-            border-radius: 50%; cursor: pointer; margin-top: 10px; font-size: 18px;
-        }
-        
-        .reset-btn { margin-top: 40px; font-size: 11px; color: #ccc; cursor: pointer; border: none; background: none; }
+        .btn-audio { background: #f8f8f8; border: 1px solid #ddd; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+        .reset-btn { margin-top: 30px; font-size: 10px; color: #bbb; cursor: pointer; border: none; background: none; text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Italiano Inteligente</h1>
-        <div class="stats">Palabras dominadas: <span id="mastered-count">0</span> / <span id="total-count">0</span></div>
+        <h2 style="margin:0; color: var(--gris);">🇮🇹 Sfida di Italiano</h2>
+        <div class="progress-container"><div class="progress-bar" id="pb"></div></div>
+        <div class="stats">
+            <span>Dominadas: <b id="mastered-count">0</b></span>
+            <span>Total: <b>120</b></span>
+        </div>
     </div>
 
     <div class="card">
-        <div class="category" id="cat-label">Verbo</div>
-        <div class="word-it" id="main-word">Caricamento...</div>
+        <div class="category" id="cat-label">CARICANDO...</div>
+        <div class="word-it" id="main-word">---</div>
         <button class="btn-audio" onclick="speakIt()">🔊</button>
         <div class="context-box" id="context-box">
-            <span id="phrase-it"></span><br>
-            <small id="phrase-es" style="color: #888;"></small>
+            <div id="phrase-it" style="font-weight: bold; margin-bottom: 5px;"></div>
+            <div id="phrase-es" style="color: #666; font-size: 13px;"></div>
         </div>
     </div>
 
     <div class="options-grid" id="options-grid"></div>
-
-    <button class="reset-btn" onclick="resetProgress()">Reiniciar todo el progreso</button>
+    <button class="reset-btn" onclick="resetProgress()">Reiniciar Diccionario</button>
 
     <script>
-        // Base de datos con CONTEXTO (Frases)
         const rawDeck = [
-            {it: "Essere", es: "Ser / Estar", cat: "Auxiliar", ctx_it: "Io sono italiano.", ctx_es: "Yo soy italiano."},
-            {it: "Avere", es: "Tener / Haber", cat: "Auxiliar", ctx_it: "Io ho un libro.", ctx_es: "Yo tengo un libro."},
-            {it: "Prendere", es: "Tomar / Coger", cat: "Verbo", ctx_it: "Prendo un caffè, per favore.", ctx_es: "Tomo un café, por favor."},
-            {it: "Andare", es: "Ir", cat: "Verbo", ctx_it: "Vado a casa adesso.", ctx_es: "Voy a casa ahora."},
-            {it: "Sempre", es: "Siempre", cat: "Adverbio", ctx_it: "Ti amerò per sempre.", ctx_es: "Te amaré por siempre."},
-            {it: "Spesso", es: "A menudo", cat: "Adverbio", ctx_it: "Vado spesso al cinema.", ctx_es: "Voy a menudo al cine."},
-            {it: "Capire", es: "Entender", cat: "Verbo", ctx_it: "Non capisco questa parola.", ctx_es: "No entiendo esta palabra."},
-            {it: "Trovare", es: "Encontrar", cat: "Verbo", ctx_it: "Non trovo le mie chiavi.", ctx_es: "No encuentro mis llaves."},
-            {it: "Dimenticare", es: "Olvidar", cat: "Verbo", ctx_it: "Non dimenticare l'ombrello!", ctx_es: "¡No olvides el paraguas!"},
-            {it: "Mela", es: "Manzana", cat: "Sustantivo", ctx_it: "Mangio una mela rossa.", ctx_es: "Como una manzana roja."},
-            {it: "Macchina", es: "Coche", cat: "Sustantivo", ctx_it: "La mia macchina è vecchia.", ctx_es: "Mi coche es viejo."},
-            {it: "Domani", es: "Mañana", cat: "Tiempo", ctx_it: "Ci vediamo domani mattina.", ctx_es: "Nos vemos mañana por la mañana."}
+            // VERBOS ESENCIALES (1-20)
+            {it: "Essere", es: "Ser / Estar", cat: "Verbo", ctx_it: "Lui è molto simpatico.", ctx_es: "Él es muy simpático."},
+            {it: "Avere", es: "Tener / Haber", cat: "Verbo", ctx_it: "Quanti anni hai?", ctx_es: "¿Cuántos años tienes?"},
+            {it: "Fare", es: "Hacer", cat: "Verbo", ctx_it: "Cosa fai nel tempo libero?", ctx_es: "¿Qué haces en tu tiempo libre?"},
+            {it: "Andare", es: "Ir", cat: "Verbo", ctx_it: "Vado in Italia quest'estate.", ctx_es: "Voy a Italia este verano."},
+            {it: "Potere", es: "Poder", cat: "Verbo", ctx_it: "Posso entrare?", ctx_es: "¿Puedo entrar?"},
+            {it: "Volere", es: "Querer", cat: "Verbo", ctx_it: "Voglio imparare l'italiano.", ctx_es: "Quiero aprender italiano."},
+            {it: "Dovere", es: "Deber / Tener que", cat: "Verbo", ctx_it: "Devo andare a lavorare.", ctx_es: "Tengo que ir a trabajar."},
+            {it: "Sapere", es: "Saber", cat: "Verbo", ctx_it: "Non lo so.", ctx_es: "No lo sé."},
+            {it: "Stare", es: "Estar", cat: "Verbo", ctx_it: "Come stai oggi?", ctx_es: "¿Cómo estás hoy?"},
+            {it: "Venire", es: "Venir", cat: "Verbo", ctx_it: "Vieni alla festa?", ctx_es: "¿Vienes a la fiesta?"},
+            {it: "Dire", es: "Decir", cat: "Verbo", ctx_it: "Dimmi la verità.", ctx_es: "Dime la verdad."},
+            {it: "Dare", es: "Dar", cat: "Verbo", ctx_it: "Mi dai una mano?", ctx_es: "¿Me das una mano?"},
+            {it: "Parlare", es: "Hablar", cat: "Verbo", ctx_it: "Parliamo dopo.", ctx_es: "Hablamos después."},
+            {it: "Prendere", es: "Tomar", cat: "Verbo", ctx_it: "Prendo un treno alle otto.", ctx_es: "Tomo un treno a las ocho."},
+            {it: "Mangiare", es: "Comer", cat: "Verbo", ctx_it: "Mangiamo una pizza?", ctx_es: "¿Comemos una pizza?"},
+            {it: "Capire", es: "Entender", cat: "Verbo", ctx_it: "Capisco perfettamente.", ctx_es: "Entiendo perfectamente."},
+            {it: "Sentire", es: "Oír / Sentir", cat: "Verbo", ctx_it: "Mi sento bene oggi.", ctx_es: "Me siento bien hoy."},
+            {it: "Vedere", es: "Ver", cat: "Verbo", ctx_it: "Ci vediamo domani.", ctx_es: "Nos vemos mañana."},
+            {it: "Uscire", es: "Salir", cat: "Verbo", ctx_it: "Esco con gli amici.", ctx_es: "Salgo con los amigos."},
+            {it: "Conoscere", es: "Conocer", cat: "Verbo", ctx_it: "Piacere di conoscerti.", ctx_es: "Placer de conocerte."},
+
+            // CONECTORES Y ADVERBIOS (21-40)
+            {it: "Ma", es: "Pero", cat: "Conector", ctx_it: "È bello, ma costoso.", ctx_es: "Es bonito, pero caro."},
+            {it: "Anche", es: "También", cat: "Conector", ctx_it: "Anch'io voglio andare.", ctx_es: "Yo también quiero ir."},
+            {it: "Sempre", es: "Siempre", cat: "Adverbio", ctx_it: "Sei sempre in ritardo.", ctx_es: "Siempre llegas tarde."},
+            {it: "Mai", es: "Nunca", cat: "Adverbio", ctx_it: "Non sono mai stato a Roma.", ctx_es: "Nunca he estado en Roma."},
+            {it: "Spesso", es: "A menudo", cat: "Adverbio", ctx_it: "Vado spesso al parco.", ctx_es: "Voy a menudo al parque."},
+            {it: "Forse", es: "Quizás", cat: "Adverbio", ctx_it: "Forse vengo domani.", ctx_es: "Quizás venga mañana."},
+            {it: "Quindi", es: "Por lo tanto", cat: "Conector", ctx_it: "Ho fame, quindi mangio.", ctx_es: "Tengo hambre, por lo tanto como."},
+            {it: "Invece", es: "En cambio", cat: "Conector", ctx_it: "Lui lavora, io invece dormo.", ctx_es: "Él trabaja, yo en cambio duermo."},
+            {it: "Allora", es: "Entonces", cat: "Conector", ctx_it: "Allora, cosa facciamo?", ctx_es: "Entonces, ¿qué hacemos?"},
+            {it: "Dopo", es: "Después", cat: "Tiempo", ctx_it: "Ci sentiamo dopo.", ctx_es: "Hablamos después."},
+            {it: "Prima", es: "Antes", cat: "Tiempo", ctx_it: "Lavati le mani prima di mangiare.", ctx_es: "Lávate las manos antes de comer."},
+            {it: "Molto", es: "Mucho / Muy", cat: "Adverbio", ctx_it: "Grazie molto!", ctx_es: "¡Muchas gracias!"},
+            {it: "Poco", es: "Poco", cat: "Adverbio", ctx_it: "Ho poco tempo.", ctx_es: "Tengo poco tiempo."},
+            {it: "Troppo", es: "Demasiado", cat: "Adverbio", ctx_it: "Questo è troppo caro.", ctx_es: "Esto es demasiado caro."},
+            {it: "Sopra", es: "Encima", cat: "Lugar", ctx_it: "Il gatto è sopra il tavolo.", ctx_es: "El gato está encima de la mesa."},
+            {it: "Sotto", es: "Debajo", cat: "Lugar", ctx_it: "Le scarpe sono sotto il letto.", ctx_es: "Los zapatos están debajo de la cama."},
+            {it: "Dentro", es: "Dentro", cat: "Lugar", ctx_it: "Vieni dentro, fa freddo.", ctx_es: "Ven dentro, hace frío."},
+            {it: "Fuori", es: "Fuera", cat: "Lugar", ctx_it: "I bambini giocano fuori.", ctx_es: "Los niños juegan fuera."},
+            {it: "Vicino", es: "Cerca", cat: "Lugar", ctx_it: "Abito vicino alla stazione.", ctx_es: "Vivo cerca de la estación."},
+            {it: "Lontano", es: "Lejos", cat: "Lugar", ctx_it: "La scuola è lontana.", ctx_es: "La escuela está lejos."},
+
+            // SUSTANTIVOS COMUNES (41-65)
+            {it: "Casa", es: "Casa", cat: "Sustantivo", ctx_it: "Resto a casa stasera.", ctx_es: "Me quedo en casa esta noche."},
+            {it: "Città", es: "Ciudad", cat: "Sustantivo", ctx_it: "Milano è una grande città.", ctx_es: "Milán es una gran ciudad."},
+            {it: "Lavoro", es: "Trabajo", cat: "Sustantivo", ctx_it: "Cerco un nuovo lavoro.", ctx_es: "Busco un nuevo trabajo."},
+            {it: "Strada", es: "Calle / Camino", cat: "Sustantivo", ctx_it: "Attraversa la strada con prudenza.", ctx_es: "Cruza la calle con prudencia."},
+            {it: "Macchina", es: "Coche", cat: "Sustantivo", ctx_it: "Dov'è la mia macchina?", ctx_es: "¿Dónde está mi coche?"},
+            {it: "Libro", es: "Libro", cat: "Sustantivo", ctx_it: "Leggo un libro interessante.", ctx_es: "Leo un libro interesante."},
+            {it: "Tempo", es: "Tiempo", cat: "Sustantivo", ctx_it: "Non ho tempo da perdere.", ctx_es: "No tengo tiempo que perder."},
+            {it: "Famiglia", es: "Familia", cat: "Sustantivo", ctx_it: "Amo la mia famiglia.", ctx_es: "Amo a mi familia."},
+            {it: "Amico", es: "Amigo", cat: "Sustantivo", ctx_it: "Lui è il mio migliore amico.", ctx_es: "Él es mi mejor amigo."},
+            {it: "Cibo", es: "Comida", cat: "Sustantivo", ctx_it: "Il cibo italiano è squisito.", ctx_es: "La comida italiana es exquisita."},
+            {it: "Acqua", es: "Agua", cat: "Sustantivo", ctx_it: "Un bicchiere d'acqua, per favore.", ctx_es: "Un vaso de agua, por favor."},
+            {it: "Pane", es: "Pan", cat: "Sustantivo", ctx_it: "Compro il pane ogni mattina.", ctx_es: "Compro el pan cada mañana."},
+            {it: "Latte", es: "Leche", cat: "Sustantivo", ctx_it: "Bevo latte freddo.", ctx_es: "Bebo leche fría."},
+            {it: "Caffè", es: "Café", cat: "Sustantivo", ctx_it: "Prendiamo un caffè?", ctx_es: "¿Tomamos un café?"},
+            {it: "Soldi", es: "Dinero", cat: "Sustantivo", ctx_it: "Non ho molti soldi.", ctx_es: "No tengo mucho dinero."},
+            {it: "Chiavi", es: "Llaves", cat: "Sustantivo", ctx_it: "Ho perso le chiavi di casa.", ctx_es: "He perdido las llaves de casa."},
+            {it: "Borsa", es: "Bolso / Bolsa", cat: "Sustantivo", ctx_it: "La borsa è sul divano.", ctx_es: "El bolso está en el sofá."},
+            {it: "Vestiti", es: "Ropa", cat: "Sustantivo", ctx_it: "Devo comprare vestiti nuovi.", ctx_es: "Tengo que comprar ropa nueva."},
+            {it: "Mano", es: "Mano", cat: "Sustantivo", ctx_it: "Lavati le mani.", ctx_es: "Lávate las manos."},
+            {it: "Testa", es: "Cabeza", cat: "Sustantivo", ctx_it: "Mi fa male la testa.", ctx_es: "Me duele la cabeza."},
+            {it: "Cuore", es: "Corazón", cat: "Sustantivo", ctx_it: "Segui il tuo cuore.", ctx_es: "Sigue a tu corazón."},
+            {it: "Mondo", es: "Mundo", cat: "Sustantivo", ctx_it: "Voglio viaggiare per il mondo.", ctx_es: "Quiero viajar por el mundo."},
+            {it: "Viaggio", es: "Viaje", cat: "Sustantivo", ctx_it: "Buon viaggio!", ctx_es: "¡Buen viaje!"},
+            {it: "Sole", es: "Sol", cat: "Sustantivo", ctx_it: "Oggi c'è un bel sole.", ctx_es: "Hoy hace un sol bonito."},
+            {it: "Mare", es: "Mar", cat: "Sustantivo", ctx_it: "Andiamo al mare?", ctx_es: "¿Vamos al mar?"},
+
+            // ADJETIVOS (66-90)
+            {it: "Bello", es: "Bonito / Bello", cat: "Adjetivo", ctx_it: "Che bel vestito!", ctx_es: "¡Qué vestido más bonito!"},
+            {it: "Brutto", es: "Feo", cat: "Adjetivo", ctx_it: "Questo film è brutto.", ctx_es: "Esta película es fea."},
+            {it: "Grande", es: "Grande", cat: "Adjetivo", ctx_it: "Una grande opportunità.", ctx_es: "Una gran oportunidad."},
+            {it: "Piccolo", es: "Pequeño", cat: "Adjetivo", ctx_it: "Un piccolo favore.", ctx_es: "Un pequeño favor."},
+            {it: "Buono", es: "Bueno", cat: "Adjetivo", ctx_it: "Il gelato è buono.", ctx_es: "El helado es bueno."},
+            {it: "Cattivo", es: "Malo", cat: "Adjetivo", ctx_it: "Non essere cattivo.", ctx_es: "No seas malo."},
+            {it: "Nuovo", es: "Nuevo", cat: "Adjetivo", ctx_it: "Ho un cellulare nuovo.", ctx_es: "Tengo un móvil nuevo."},
+            {it: "Vecchio", es: "Viejo", cat: "Adjetivo", ctx_it: "Il mio computer è vecchio.", ctx_es: "Mi ordenador es viejo."},
+            {it: "Facile", es: "Fácil", cat: "Adjetivo", ctx_it: "È un esame facile.", ctx_es: "Es un examen fácil."},
+            {it: "Difficile", es: "Difícil", cat: "Adjetivo", ctx_it: "L'italiano non è difficile.", ctx_es: "El italiano no es difícil."},
+            {it: "Caldo", es: "Caliente / Calor", cat: "Adjetivo", ctx_it: "Fa molto caldo oggi.", ctx_es: "Hace mucho calor hoy."},
+            {it: "Freddo", es: "Frío", cat: "Adjetivo", ctx_it: "L'acqua è fredda.", ctx_es: "El agua está fría."},
+            {it: "Veloce", es: "Rápido", cat: "Adjetivo", ctx_it: "Un treno veloce.", ctx_es: "Un tren rápido."},
+            {it: "Lento", es: "Lento", cat: "Adjetivo", ctx_it: "Sei molto lento!", ctx_es: "¡Eres muy lento!"},
+            {it: "Alto", es: "Alto", cat: "Adjetivo", ctx_it: "Mio fratello è alto.", ctx_es: "Mi hermano es alto."},
+            {it: "Basso", es: "Bajo", cat: "Adjetivo", ctx_it: "Il soffitto è basso.", ctx_es: "El techo es bajo."},
+            {it: "Stanco", es: "Cansado", cat: "Adjetivo", ctx_it: "Sono molto stanco.", ctx_es: "Estoy muy cansado."},
+            {it: "Felice", es: "Feliz", cat: "Adjetivo", ctx_it: "Sono felice di vederti.", ctx_es: "Estoy feliz de verte."},
+            {it: "Triste", es: "Triste", cat: "Adjetivo", ctx_it: "Perché sei triste?", ctx_es: "¿Por qué estás triste?"},
+            {it: "Caro", es: "Caro", cat: "Adjetivo", ctx_it: "Il ristorante è caro.", ctx_es: "El restaurante es caro."},
+            {it: "Economico", es: "Barato", cat: "Adjetivo", ctx_it: "Un hotel economico.", ctx_es: "Un hotel barato."},
+            {it: "Ricco", es: "Rico", cat: "Adjetivo", ctx_it: "Un uomo molto ricco.", ctx_es: "Un hombre muy rico."},
+            {it: "Povero", es: "Pobre", cat: "Adjetivo", ctx_it: "Un povero ragazzo.", ctx_es: "Un pobre chico."},
+            {it: "Pulito", es: "Limpio", cat: "Adjetivo", ctx_it: "La camera è pulita.", ctx_es: "La habitación está limpia."},
+            {it: "Sporco", es: "Sucio", cat: "Adjetivo", ctx_it: "I tuoi vestiti sono sporchi.", ctx_es: "Tus ropas están sucias."},
+
+            // FRASES Y EXPRESIONES (91-120)
+            {it: "Buongiorno", es: "Buenos días", cat: "Frase", ctx_it: "Buongiorno a tutti!", ctx_es: "¡Buenos días a todos!"},
+            {it: "Buonasera", es: "Buenas tardes/noches", cat: "Frase", ctx_it: "Buonasera, come va?", ctx_es: "Buenas noches, ¿cómo va?"},
+            {it: "Buonanotte", es: "Buenas noches (dormir)", cat: "Frase", ctx_it: "Buonanotte, a domani.", ctx_es: "Buenas noches, hasta mañana."},
+            {it: "Come ti chiami?", es: "¿Cómo te llamas?", cat: "Pregunta", ctx_it: "Ciao, come ti chiami?", ctx_es: "Hola, ¿cómo te llamas?"},
+            {it: "Piacere", es: "Mucho gusto", cat: "Frase", ctx_it: "Piacere di conoscerti.", ctx_es: "Mucho gusto en conocerte."},
+            {it: "Dov'è il bagno?", es: "¿Dónde está el baño?", cat: "Pregunta", ctx_it: "Scusi, dov'è il bagno?", ctx_es: "Disculpe, ¿dónde está el baño?"},
+            {it: "Quanto costa?", es: "¿Cuánto cuesta?", cat: "Pregunta", ctx_it: "Quanto costa questo pane?", ctx_es: "¿Cuánto cuesta este pan?"},
+            {it: "Non capisco", es: "No entiendo", cat: "Frase", ctx_it: "Mi dispiace, non capisco.", ctx_es: "Lo siento, no entiendo."},
+            {it: "Può ripetere?", es: "¿Puede repetir?", cat: "Pregunta", ctx_it: "Più piano, può ripetere?", ctx_es: "Más despacio, ¿puede repetir?"},
+            {it: "Aiuto!", es: "¡Ayuda!", cat: "Frase", ctx_it: "Aiuto, ho perso il portafoglio!", ctx_es: "¡Ayuda, perdí mi billetera!"},
+            {it: "Salute!", es: "¡Salud!", cat: "Frase", ctx_it: "Brindiamo, salute!", ctx_es: "Brindemos, ¡salud!"},
+            {it: "Cosa significa?", es: "¿Qué significa?", cat: "Pregunta", ctx_it: "Cosa significa questa parola?", ctx_es: "¿Qué significa esta palabra?"},
+            {it: "Ho fame", es: "Tengo hambre", cat: "Frase", ctx_it: "Ho fame, andiamo a mangiare?", ctx_es: "Tengo hambre, ¿vamos a comer?"},
+            {it: "Ho sete", es: "Tengo sed", cat: "Frase", ctx_it: "Ho molta sete.", ctx_es: "Tengo mucha sed."},
+            {it: "Che ore sono?", es: "¿Qué hora es?", cat: "Pregunta", ctx_it: "Scusi, che ore sono?", ctx_es: "Disculpe, ¿qué hora es?"},
+            {it: "Mi scusi", es: "Disculpe (formal)", cat: "Frase", ctx_it: "Mi scusi, signore.", ctx_es: "Disculpe, señor."},
+            {it: "A domani", es: "Hasta mañana", cat: "Frase", ctx_it: "Ciao, a domani!", ctx_es: "¡Adiós, hasta mañana!"},
+            {it: "A presto", es: "Hasta pronto", cat: "Frase", ctx_it: "Grazie di tutto, a presto.", ctx_es: "Gracias por todo, hasta pronto."},
+            {it: "Divertiti!", es: "¡Diviértete!", cat: "Frase", ctx_it: "Vai alla festa? Divertiti!", ctx_es: "¿Vas a la fiesta? ¡Diviértete!"},
+            {it: "Buon appetito", es: "Buen provecho", cat: "Frase", ctx_it: "Il pranzo è pronto, buon appetito!", ctx_es: "El almuerzo está listo, ¡buen provecho!"},
+            {it: "Tutto bene?", es: "¿Todo bien?", cat: "Pregunta", ctx_it: "Ciao! Tutto bene?", ctx_es: "¡Hola! ¿Todo bien?"},
+            {it: "Non importa", es: "No importa", cat: "Frase", ctx_it: "Ho rotto il piatto. - Non importa.", ctx_es: "Rompí el plato. - No importa."},
+            {it: "Magari!", es: "¡Ojalá!", cat: "Frase", ctx_it: "Vinciamo la lotteria? - Magari!", ctx_es: "¿Ganamos la lotería? - ¡Ojalá!"},
+            {it: "Certo", es: "Cierto / Claro", cat: "Frase", ctx_it: "Vuoi un caffè? - Certo!", ctx_es: "¿Quieres un café? - ¡Claro!"},
+            {it: "Davvero?", es: "¿De verdad?", cat: "Pregunta", ctx_it: "Vado in America. - Davvero?", ctx_es: "Voy a América. - ¿De verdad?"},
+            {it: "Peccato", es: "Lástima", cat: "Frase", ctx_it: "Non puoi venire? Che peccato!", ctx_es: "¿No puedes venir? ¡Qué lástima!"}
         ];
 
-        let state = JSON.parse(localStorage.getItem('it_srs_state')) || {
-            wordStats: rawDeck.map(w => ({...w, score: 0})), // score 0 = nueva, alto = dominada
+        let state = JSON.parse(localStorage.getItem('it_srs_v120')) || {
+            wordStats: rawDeck.map(w => ({...w, score: 0})),
         };
 
         let currentWord = null;
         let canAnswer = true;
 
         function save() {
-            localStorage.setItem('it_srs_state', JSON.stringify(state));
-            updateStats();
+            localStorage.setItem('it_srs_v120', JSON.stringify(state));
+            updateUI();
         }
 
-        function updateStats() {
-            const mastered = state.wordStats.filter(w => w.score >= 3).length;
+        function updateUI() {
+            const mastered = state.wordStats.filter(w => w.score >= 4).length;
+            const total = state.wordStats.length;
             document.getElementById('mastered-count').innerText = mastered;
-            document.getElementById('total-count').innerText = state.wordStats.length;
+            document.getElementById('pb').style.width = (mastered / total * 100) + "%";
         }
 
         function getNextWord() {
-            // LÓGICA SRS: Ordenamos por score (las de menor score salen primero)
-            // Añadimos un poco de aleatoriedad entre las 5 con menor puntuación
-            let pool = [...state.wordStats].sort((a, b) => a.score - b.score).slice(0, 5);
+            // SRS: Priorizamos palabras con score bajo, pero mezclamos un poco
+            let sorted = [...state.wordStats].sort((a, b) => a.score - b.score);
+            let pool = sorted.slice(0, 10); // Escogemos entre las 10 que menos sabemos
             return pool[Math.floor(Math.random() * pool.length)];
         }
 
@@ -122,17 +230,14 @@
             document.getElementById('cat-label').innerText = currentWord.cat;
             document.getElementById('context-box').style.display = 'none';
             
-            // Generar opciones
             const grid = document.getElementById('options-grid');
             grid.innerHTML = '';
             
             let choices = [currentWord.es];
-            let distractors = rawDeck.filter(d => d.es !== currentWord.es)
-                                     .sort(() => 0.5 - Math.random())
-                                     .slice(0, 3)
-                                     .map(d => d.es);
-            
-            choices = [...choices, ...distractors].sort(() => 0.5 - Math.random());
+            let pool = rawDeck.filter(d => d.es !== currentWord.es);
+            pool.sort(() => 0.5 - Math.random());
+            choices.push(pool[0].es, pool[1].es, pool[2].es);
+            choices.sort(() => 0.5 - Math.random());
 
             choices.forEach(text => {
                 const btn = document.createElement('button');
@@ -148,28 +253,25 @@
             canAnswer = false;
 
             const isCorrect = (selected === currentWord.es);
-            
-            // Actualizar SRS Score
-            const wordInState = state.wordStats.find(w => w.it === currentWord.it);
+            const wordObj = state.wordStats.find(w => w.it === currentWord.it);
+
             if (isCorrect) {
                 btn.classList.add('correct');
-                wordInState.score += 1;
+                wordObj.score += 1;
             } else {
                 btn.classList.add('wrong');
-                wordInState.score = Math.max(0, wordInState.score - 2); // Castigo por error
-                // Mostrar correcta
+                wordObj.score = Math.max(0, wordObj.score - 1);
                 Array.from(document.getElementsByClassName('option-btn')).forEach(b => {
                     if (b.innerText === currentWord.es) b.classList.add('correct');
                 });
             }
 
-            // Mostrar Contexto
             document.getElementById('phrase-it').innerText = currentWord.ctx_it;
             document.getElementById('phrase-es').innerText = currentWord.ctx_es;
             document.getElementById('context-box').style.display = 'block';
 
             save();
-            setTimeout(renderQuiz, isCorrect ? 1800 : 3500); // Más tiempo si falla para leer contexto
+            setTimeout(renderQuiz, isCorrect ? 1500 : 3500);
         }
 
         function speakIt() {
@@ -179,14 +281,13 @@
         }
 
         function resetProgress() {
-            if(confirm("¿Seguro que quieres borrar todo tu progreso?")) {
-                localStorage.removeItem('it_srs_state');
+            if(confirm("¿Seguro? Se borrarán tus 120 palabras aprendidas.")) {
+                localStorage.removeItem('it_srs_v120');
                 location.reload();
             }
         }
 
-        // Inicio
-        updateStats();
+        updateUI();
         renderQuiz();
     </script>
 </body>

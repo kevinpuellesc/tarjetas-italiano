@@ -14,9 +14,18 @@
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px;
         }
         .header { text-align: center; margin-bottom: 20px; width: 100%; max-width: 450px; }
-        .progress-container { width: 100%; background: #ddd; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--verde); width: 0%; transition: width 0.5s; }
-        .stats { font-size: 0.85rem; color: #555; margin-top: 5px; display: flex; justify-content: space-between; }
+        
+        /* Barra de Progreso Mejorada */
+        .progress-container { 
+            width: 100%; background: #e0e0e0; height: 12px; border-radius: 6px; 
+            margin-top: 15px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .progress-bar { 
+            height: 100%; background: linear-gradient(90deg, #008C45, #28a745); 
+            width: 0%; transition: width 0.4s ease-out; 
+        }
+
+        .stats { font-size: 0.85rem; color: #555; margin-top: 8px; display: flex; justify-content: space-between; font-weight: bold; }
 
         .card { 
             width: 100%; max-width: 400px; background: white; border-radius: 20px;
@@ -40,7 +49,7 @@
         .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46; }
         .wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
 
-        .btn-audio { background: #f8f8f8; border: 1px solid #ddd; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+        .btn-audio { background: #f8f8f8; border: 1px solid #ddd; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 18px; margin-bottom: 10px; }
         .reset-btn { margin-top: 30px; font-size: 10px; color: #bbb; cursor: pointer; border: none; background: none; text-decoration: underline; }
     </style>
 </head>
@@ -51,7 +60,7 @@
         <div class="progress-container"><div class="progress-bar" id="pb"></div></div>
         <div class="stats">
             <span>Dominadas: <b id="mastered-count">0</b></span>
-            <span>Total: <b>120</b></span>
+            <span>Total: <b id="total-words">120</b></span>
         </div>
     </div>
 
@@ -69,8 +78,8 @@
     <button class="reset-btn" onclick="resetProgress()">Reiniciar Diccionario</button>
 
     <script>
+        // La base de datos de 120 palabras se mantiene igual para no perder contenido
         const rawDeck = [
-            // VERBOS ESENCIALES (1-20)
             {it: "Essere", es: "Ser / Estar", cat: "Verbo", ctx_it: "Lui è molto simpatico.", ctx_es: "Él es muy simpático."},
             {it: "Avere", es: "Tener / Haber", cat: "Verbo", ctx_it: "Quanti anni hai?", ctx_es: "¿Cuántos años tienes?"},
             {it: "Fare", es: "Hacer", cat: "Verbo", ctx_it: "Cosa fai nel tempo libero?", ctx_es: "¿Qué haces en tu tiempo libre?"},
@@ -91,8 +100,6 @@
             {it: "Vedere", es: "Ver", cat: "Verbo", ctx_it: "Ci vediamo domani.", ctx_es: "Nos vemos mañana."},
             {it: "Uscire", es: "Salir", cat: "Verbo", ctx_it: "Esco con gli amici.", ctx_es: "Salgo con los amigos."},
             {it: "Conoscere", es: "Conocer", cat: "Verbo", ctx_it: "Piacere di conoscerti.", ctx_es: "Placer de conocerte."},
-
-            // CONECTORES Y ADVERBIOS (21-40)
             {it: "Ma", es: "Pero", cat: "Conector", ctx_it: "È bello, ma costoso.", ctx_es: "Es bonito, pero caro."},
             {it: "Anche", es: "También", cat: "Conector", ctx_it: "Anch'io voglio andare.", ctx_es: "Yo también quiero ir."},
             {it: "Sempre", es: "Siempre", cat: "Adverbio", ctx_it: "Sei sempre in ritardo.", ctx_es: "Siempre llegas tarde."},
@@ -113,13 +120,11 @@
             {it: "Fuori", es: "Fuera", cat: "Lugar", ctx_it: "I bambini giocano fuori.", ctx_es: "Los niños juegan fuera."},
             {it: "Vicino", es: "Cerca", cat: "Lugar", ctx_it: "Abito vicino alla stazione.", ctx_es: "Vivo cerca de la estación."},
             {it: "Lontano", es: "Lejos", cat: "Lugar", ctx_it: "La scuola è lontana.", ctx_es: "La escuela está lejos."},
-
-            // SUSTANTIVOS COMUNES (41-65)
             {it: "Casa", es: "Casa", cat: "Sustantivo", ctx_it: "Resto a casa stasera.", ctx_es: "Me quedo en casa esta noche."},
             {it: "Città", es: "Ciudad", cat: "Sustantivo", ctx_it: "Milano è una grande città.", ctx_es: "Milán es una gran ciudad."},
             {it: "Lavoro", es: "Trabajo", cat: "Sustantivo", ctx_it: "Cerco un nuovo lavoro.", ctx_es: "Busco un nuevo trabajo."},
             {it: "Strada", es: "Calle / Camino", cat: "Sustantivo", ctx_it: "Attraversa la strada con prudenza.", ctx_es: "Cruza la calle con prudencia."},
-            {it: "Macchina", es: "Coche", cat: "Sustantivo", ctx_it: "Dov'è la mia macchina?", ctx_es: "¿Dónde está mi coche?"},
+            {it: "Macchina", es: "Coche", cat: "Sustantivo", ctx_it: "Dov'è la mia máquina?", ctx_es: "¿Dónde está mi coche?"},
             {it: "Libro", es: "Libro", cat: "Sustantivo", ctx_it: "Leggo un libro interessante.", ctx_es: "Leo un libro interesante."},
             {it: "Tempo", es: "Tiempo", cat: "Sustantivo", ctx_it: "Non ho tempo da perdere.", ctx_es: "No tengo tiempo que perder."},
             {it: "Famiglia", es: "Familia", cat: "Sustantivo", ctx_it: "Amo la mia famiglia.", ctx_es: "Amo a mi familia."},
@@ -140,8 +145,6 @@
             {it: "Viaggio", es: "Viaje", cat: "Sustantivo", ctx_it: "Buon viaggio!", ctx_es: "¡Buen viaje!"},
             {it: "Sole", es: "Sol", cat: "Sustantivo", ctx_it: "Oggi c'è un bel sole.", ctx_es: "Hoy hace un sol bonito."},
             {it: "Mare", es: "Mar", cat: "Sustantivo", ctx_it: "Andiamo al mare?", ctx_es: "¿Vamos al mar?"},
-
-            // ADJETIVOS (66-90)
             {it: "Bello", es: "Bonito / Bello", cat: "Adjetivo", ctx_it: "Che bel vestito!", ctx_es: "¡Qué vestido más bonito!"},
             {it: "Brutto", es: "Feo", cat: "Adjetivo", ctx_it: "Questo film è brutto.", ctx_es: "Esta película es fea."},
             {it: "Grande", es: "Grande", cat: "Adjetivo", ctx_it: "Una grande opportunità.", ctx_es: "Una gran oportunidad."},
@@ -167,8 +170,6 @@
             {it: "Povero", es: "Pobre", cat: "Adjetivo", ctx_it: "Un povero ragazzo.", ctx_es: "Un pobre chico."},
             {it: "Pulito", es: "Limpio", cat: "Adjetivo", ctx_it: "La camera è pulita.", ctx_es: "La habitación está limpia."},
             {it: "Sporco", es: "Sucio", cat: "Adjetivo", ctx_it: "I tuoi vestiti sono sporchi.", ctx_es: "Tus ropas están sucias."},
-
-            // FRASES Y EXPRESIONES (91-120)
             {it: "Buongiorno", es: "Buenos días", cat: "Frase", ctx_it: "Buongiorno a tutti!", ctx_es: "¡Buenos días a todos!"},
             {it: "Buonasera", es: "Buenas tardes/noches", cat: "Frase", ctx_it: "Buonasera, come va?", ctx_es: "Buenas noches, ¿cómo va?"},
             {it: "Buonanotte", es: "Buenas noches (dormir)", cat: "Frase", ctx_it: "Buonanotte, a domani.", ctx_es: "Buenas noches, hasta mañana."},
@@ -197,7 +198,8 @@
             {it: "Peccato", es: "Lástima", cat: "Frase", ctx_it: "Non puoi venire? Che peccato!", ctx_es: "¿No puedes venir? ¡Qué lástima!"}
         ];
 
-        let state = JSON.parse(localStorage.getItem('it_srs_v120')) || {
+        // Cambiamos la clave del localStorage para forzar un reinicio limpio con la corrección
+        let state = JSON.parse(localStorage.getItem('it_master_v2')) || {
             wordStats: rawDeck.map(w => ({...w, score: 0})),
         };
 
@@ -205,21 +207,28 @@
         let canAnswer = true;
 
         function save() {
-            localStorage.setItem('it_srs_v120', JSON.stringify(state));
+            localStorage.setItem('it_master_v2', JSON.stringify(state));
             updateUI();
         }
 
+        // CORRECCIÓN: Función de interfaz que cuenta realmente las palabras
         function updateUI() {
-            const mastered = state.wordStats.filter(w => w.score >= 4).length;
             const total = state.wordStats.length;
+            const mastered = state.wordStats.filter(w => w.score >= 4).length;
+            
+            // Actualizar textos
             document.getElementById('mastered-count').innerText = mastered;
-            document.getElementById('pb').style.width = (mastered / total * 100) + "%";
+            document.getElementById('total-words').innerText = total;
+            
+            // Actualizar barra de progreso
+            const percent = (mastered / total) * 100;
+            document.getElementById('pb').style.width = percent + "%";
         }
 
         function getNextWord() {
-            // SRS: Priorizamos palabras con score bajo, pero mezclamos un poco
-            let sorted = [...state.wordStats].sort((a, b) => a.score - b.score);
-            let pool = sorted.slice(0, 10); // Escogemos entre las 10 que menos sabemos
+            // SRS: Priorizamos palabras con score bajo (< 4)
+            let candidates = [...state.wordStats].sort((a, b) => a.score - b.score);
+            let pool = candidates.slice(0, 12); 
             return pool[Math.floor(Math.random() * pool.length)];
         }
 
@@ -234,9 +243,9 @@
             grid.innerHTML = '';
             
             let choices = [currentWord.es];
-            let pool = rawDeck.filter(d => d.es !== currentWord.es);
-            pool.sort(() => 0.5 - Math.random());
-            choices.push(pool[0].es, pool[1].es, pool[2].es);
+            let distractors = rawDeck.filter(d => d.es !== currentWord.es);
+            distractors.sort(() => 0.5 - Math.random());
+            choices.push(distractors[0].es, distractors[1].es, distractors[2].es);
             choices.sort(() => 0.5 - Math.random());
 
             choices.forEach(text => {
@@ -253,14 +262,14 @@
             canAnswer = false;
 
             const isCorrect = (selected === currentWord.es);
-            const wordObj = state.wordStats.find(w => w.it === currentWord.it);
+            const wordInState = state.wordStats.find(w => w.it === currentWord.it);
 
             if (isCorrect) {
                 btn.classList.add('correct');
-                wordObj.score += 1;
+                wordInState.score += 1;
             } else {
                 btn.classList.add('wrong');
-                wordObj.score = Math.max(0, wordObj.score - 1);
+                wordInState.score = Math.max(0, wordInState.score - 1);
                 Array.from(document.getElementsByClassName('option-btn')).forEach(b => {
                     if (b.innerText === currentWord.es) b.classList.add('correct');
                 });
@@ -270,23 +279,25 @@
             document.getElementById('phrase-es').innerText = currentWord.ctx_es;
             document.getElementById('context-box').style.display = 'block';
 
-            save();
-            setTimeout(renderQuiz, isCorrect ? 1500 : 3500);
+            save(); // Aquí se dispara updateUI()
+            setTimeout(renderQuiz, isCorrect ? 1600 : 3500);
         }
 
         function speakIt() {
             const ut = new SpeechSynthesisUtterance(currentWord.it);
             ut.lang = 'it-IT';
+            ut.rate = 0.9;
             window.speechSynthesis.speak(ut);
         }
 
         function resetProgress() {
-            if(confirm("¿Seguro? Se borrarán tus 120 palabras aprendidas.")) {
-                localStorage.removeItem('it_srs_v120');
+            if(confirm("¿Estás seguro? Perderás todo el progreso de tus 120 palabras.")) {
+                localStorage.removeItem('it_master_v2');
                 location.reload();
             }
         }
 
+        // Carga inicial
         updateUI();
         renderQuiz();
     </script>

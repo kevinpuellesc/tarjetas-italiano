@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guías Visuales | Italiano Accademia</title>
+    <style>
+        :root {
+            --masculino: #3498db; --femenino: #e74c3c;
+            --oscuro: #2c3e50; --bg: #f4f7f9; --blanco: #ffffff;
+        }
+        body { 
+            font-family: 'SF Pro Display', system-ui, sans-serif; 
+            background: var(--bg); margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .back-link { text-decoration: none; color: var(--oscuro); font-weight: bold; font-size: 0.9rem; opacity: 0.6; }
+
+        .container { width: 100%; max-width: 600px; }
+        h1 { font-size: 1.8rem; margin-bottom: 10px; text-align: center; }
+        p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; }
+
+        /* Estructura de las Guías */
+        .guide-section {
+            background: var(--blanco); border-radius: 25px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px;
+        }
+
+        .guide-title { 
+            font-weight: 800; font-size: 1.2rem; margin-bottom: 20px; 
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* Tabs de Género */
+        .gender-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { 
+            flex: 1; padding: 12px; border: none; border-radius: 12px; 
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            background: #f1f3f5; color: #95a5a6;
+        }
+        .tab.active-m { background: var(--masculino); color: white; }
+        .tab.active-f { background: var(--femenino); color: white; }
+
+        /* Grid de Artículos */
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
+        .art-card {
+            background: #f8f9fa; border-radius: 15px; padding: 15px;
+            text-align: center; cursor: pointer; border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .art-card:hover { border-color: #dee2e6; }
+        .art-card.selected { border-color: currentColor; background: #fff; transform: scale(1.05); }
+
+        .art-name { font-size: 1.5rem; font-weight: 900; display: block; }
+        .art-type { font-size: 0.7rem; text-transform: uppercase; color: #95a5a6; }
+
+        /* Panel de Reglas Explicativas */
+        .rule-panel {
+            margin-top: 25px; padding: 20px; border-radius: 18px;
+            background: #fff9f0; border-left: 5px solid #f39c12;
+            display: none; /* Se activa con JS */
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+
+        .example-tag {
+            display: inline-block; background: #eee; padding: 4px 10px;
+            border-radius: 8px; margin: 5px 3px; font-size: 0.9rem; font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="index.html" class="back-link">← Dashboard</a>
+        <div style="font-weight: bold; color: var(--oscuro);">LEZIONE 01</div>
+    </div>
+
+    <div class="container">
+        <h1>Gli Articoli Determinativi</h1>
+        <p class="subtitle">Toca un artículo para ver cuándo usarlo y ejemplos reales.</p>
+
+        <div class="guide-section">
+            <div class="gender-tabs">
+                <button class="tab active-m" id="tabM" onclick="switchGender('M')">Maschile</button>
+                <button class="tab" id="tabF" onclick="switchGender('F')">Femminile</button>
+            </div>
+
+            <div class="articles-grid" id="artGrid">
+                </div>
+
+            <div class="rule-panel" id="rulePanel">
+                <h3 id="ruleTitle" style="margin-top: 0;">Regla</h3>
+                <p id="ruleText" style="color: #5d6d7e; font-size: 0.95rem;"></p>
+                <div id="ruleExamples"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const data = {
+            M: [
+                { art: "IL", type: "Singular", rule: "Para palabras que empiezan con la mayoría de las consonantes.", ex: ["il libro", "il ragazzo", "il cane"] },
+                { art: "LO", type: "Singular", rule: "Para palabras que empiezan con S+consonante, Z, GN, PS, o X.", ex: ["lo studente", "lo zaino", "lo psicologo"] },
+                { art: "L'", type: "Singular", rule: "Para palabras que empiezan con vocal.", ex: ["l'amico", "l'albero", "l'elefante"] },
+                { art: "I", type: "Plural", rule: "Plural de IL.", ex: ["i libri", "i ragazzi", "i cani"] },
+                { art: "GLI", type: "Plural", rule: "Plural de LO y L'.", ex: ["gli studenti", "gli amici", "gli zaini"] }
+            ],
+            F: [
+                { art: "LA", type: "Singular", rule: "Para palabras femeninas que empiezan con consonante.", ex: ["la casa", "la ragazza", "la sedia"] },
+                { art: "L'", type: "Singular", rule: "Para palabras femeninas que empiezan con vocal.", ex: ["l'amica", "l'isola", "l'erba"] },
+                { art: "LE", type: "Plural", rule: "Plural de LA y L'.", ex: ["le case", "le amiche", "le sedie"] }
+            ]
+        };
+
+        let currentGender = 'M';
+
+        function switchGender(g) {
+            currentGender = g;
+            document.getElementById('tabM').className = g === 'M' ? 'tab active-m' : 'tab';
+            document.getElementById('tabF').className = g === 'F' ? 'tab active-f' : 'tab';
+            document.getElementById('rulePanel').style.display = 'none';
+            renderArticles();
+        }
+
+        function renderArticles() {
+            const grid = document.getElementById('artGrid');
+            grid.innerHTML = '';
+            data[currentGender].forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'art-card';
+                card.style.color = currentGender === 'M' ? 'var(--masculino)' : 'var(--femenino)';
+                card.innerHTML = `<span class="art-name">${item.art}</span><span class="art-type">${item.type}</span>`;
+                card.onclick = () => showRule(item, card);
+                grid.appendChild(card);
+            });
+        }
+
+        function showRule(item, card) {
+            // UI de selección
+            document.querySelectorAll('.art-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+
+            // Mostrar Panel
+            const panel = document.getElementById('rulePanel');
+            panel.style.display = 'block';
+            panel.style.borderLeftColor = currentGender === 'M' ? 'var(--masculino)' : 'var(--femenino)';
+            
+            document.getElementById('ruleTitle').innerText = `Artículo "${item.art}"`;
+            document.getElementById('ruleText').innerText = item.rule;
+            
+            const exDiv = document.getElementById('ruleExamples');
+            exDiv.innerHTML = item.ex.map(e => `<span class="example-tag">${e}</span>`).join('');
+        }
+
+        renderArticles();
+    </script>
+</body>
+</html>

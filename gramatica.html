@@ -7,7 +7,7 @@
     <style>
         :root {
             --masculino: #3498db; --femenino: #e74c3c;
-            --oscuro: #2c3e50; --bg: #f4f7f9; --blanco: #ffffff;
+            --oscuro: #2c3e50; --bg: #f4f7f9; --blanco: #ffffff; --oro: #f39c12;
         }
         body { 
             font-family: 'SF Pro Display', system-ui, sans-serif; 
@@ -15,147 +15,202 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        .header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header { width: 100%; max-width: 650px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .back-link { text-decoration: none; color: var(--oscuro); font-weight: bold; font-size: 0.9rem; opacity: 0.6; }
 
-        .container { width: 100%; max-width: 600px; }
+        .container { width: 100%; max-width: 650px; }
         h1 { font-size: 1.8rem; margin-bottom: 10px; text-align: center; }
-        p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; }
-
-        /* Estructura de las Guías */
+        
         .guide-section {
             background: var(--blanco); border-radius: 25px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 40px;
         }
 
-        .guide-title { 
-            font-weight: 800; font-size: 1.2rem; margin-bottom: 20px; 
-            display: flex; align-items: center; gap: 10px;
-        }
+        .section-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 20px; color: var(--oscuro); display: flex; align-items: center; gap: 10px; }
 
-        /* Tabs de Género */
+        /* Estilos de la Guía de Artículos (Mantenidos) */
         .gender-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { 
-            flex: 1; padding: 12px; border: none; border-radius: 12px; 
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            background: #f1f3f5; color: #95a5a6;
-        }
+        .tab { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; background: #f1f3f5; color: #95a5a6; }
         .tab.active-m { background: var(--masculino); color: white; }
         .tab.active-f { background: var(--femenino); color: white; }
-
-        /* Grid de Artículos */
         .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
-        .art-card {
-            background: #f8f9fa; border-radius: 15px; padding: 15px;
-            text-align: center; cursor: pointer; border: 2px solid transparent;
-            transition: 0.2s;
-        }
-        .art-card:hover { border-color: #dee2e6; }
+        .art-card { background: #f8f9fa; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; }
         .art-card.selected { border-color: currentColor; background: #fff; transform: scale(1.05); }
 
-        .art-name { font-size: 1.5rem; font-weight: 900; display: block; }
-        .art-type { font-size: 0.7rem; text-transform: uppercase; color: #95a5a6; }
-
-        /* Panel de Reglas Explicativas */
-        .rule-panel {
-            margin-top: 25px; padding: 20px; border-radius: 18px;
-            background: #fff9f0; border-left: 5px solid #f39c12;
-            display: none; /* Se activa con JS */
-            animation: fadeIn 0.4s ease;
+        /* NUEVOS ESTILOS: El Miscelatore (Preposiciones) */
+        .mixer-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .mixer-controls { display: flex; justify-content: space-between; width: 100%; gap: 15px; }
+        .column { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .column-label { font-size: 0.7rem; font-weight: bold; color: #bdc3c7; text-transform: uppercase; text-align: center; margin-bottom: 5px; }
+        
+        .mix-btn { 
+            padding: 12px; border: 2px solid #f1f3f5; border-radius: 12px; 
+            background: #f8f9fa; cursor: pointer; font-weight: 700; transition: 0.2s;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+        .mix-btn.selected { background: var(--oscuro); color: white; border-color: var(--oscuro); }
 
-        .example-tag {
-            display: inline-block; background: #eee; padding: 4px 10px;
-            border-radius: 8px; margin: 5px 3px; font-size: 0.9rem; font-weight: 600;
+        .fusion-result {
+            width: 100%; background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            border-radius: 20px; padding: 30px; color: white; text-align: center;
+            display: none; animation: popIn 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
         }
+        @keyframes popIn { from { opacity:0; transform: scale(0.9); } to { opacity:1; transform: scale(1); } }
+
+        .fusion-formula { font-size: 1.2rem; opacity: 0.8; margin-bottom: 10px; }
+        .fusion-word { font-size: 3rem; font-weight: 900; margin-bottom: 15px; letter-spacing: -1px; }
+        .fusion-example { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; font-style: italic; }
+
+        .rule-panel { margin-top: 25px; padding: 20px; border-radius: 18px; background: #fff9f0; border-left: 5px solid #f39c12; display: none; }
+        .example-tag { display: inline-block; background: #eee; padding: 4px 10px; border-radius: 8px; margin: 5px 3px; font-size: 0.9rem; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <a href="index.html" class="back-link">← Dashboard</a>
-        <div style="font-weight: bold; color: var(--oscuro);">LEZIONE 01</div>
+        <div style="font-weight: bold; color: var(--oscuro);">GRAMÁTICA VISUAL</div>
     </div>
 
     <div class="container">
-        <h1>Gli Articoli Determinativi</h1>
-        <p class="subtitle">Toca un artículo para ver cuándo usarlo y ejemplos reales.</p>
-
+        
         <div class="guide-section">
+            <div class="section-title"><span>01.</span> Gli Articoli Determinativi</div>
             <div class="gender-tabs">
                 <button class="tab active-m" id="tabM" onclick="switchGender('M')">Maschile</button>
                 <button class="tab" id="tabF" onclick="switchGender('F')">Femminile</button>
             </div>
-
-            <div class="articles-grid" id="artGrid">
-                </div>
-
+            <div class="articles-grid" id="artGrid"></div>
             <div class="rule-panel" id="rulePanel">
-                <h3 id="ruleTitle" style="margin-top: 0;">Regla</h3>
-                <p id="ruleText" style="color: #5d6d7e; font-size: 0.95rem;"></p>
+                <h3 id="ruleTitle" style="margin:0"></h3>
+                <p id="ruleText"></p>
                 <div id="ruleExamples"></div>
             </div>
         </div>
+
+        <div class="guide-section">
+            <div class="section-title"><span>02.</span> Il Miscelatore</div>
+            <p style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 20px;">Combina una preposición y un artículo para ver su fusión.</p>
+            
+            <div class="mixer-container">
+                <div class="mixer-controls">
+                    <div class="column" id="prepCol">
+                        <div class="column-label">Preposición</div>
+                        </div>
+                    <div style="display: flex; align-items: center; font-size: 1.5rem; color: #bdc3c7;">+</div>
+                    <div class="column" id="artCol">
+                        <div class="column-label">Artículo</div>
+                        </div>
+                </div>
+
+                <div class="fusion-result" id="fusionResult">
+                    <div class="fusion-formula" id="fFormula">DI + IL</div>
+                    <div class="fusion-word" id="fWord">DEL</div>
+                    <div class="fusion-example" id="fExample">"Il colore del mare" (El color del mar)</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const data = {
+        // --- LÓGICA ARTÍCULOS ---
+        const artData = {
             M: [
-                { art: "IL", type: "Singular", rule: "Para palabras que empiezan con la mayoría de las consonantes.", ex: ["il libro", "il ragazzo", "il cane"] },
-                { art: "LO", type: "Singular", rule: "Para palabras que empiezan con S+consonante, Z, GN, PS, o X.", ex: ["lo studente", "lo zaino", "lo psicologo"] },
-                { art: "L'", type: "Singular", rule: "Para palabras que empiezan con vocal.", ex: ["l'amico", "l'albero", "l'elefante"] },
-                { art: "I", type: "Plural", rule: "Plural de IL.", ex: ["i libri", "i ragazzi", "i cani"] },
-                { art: "GLI", type: "Plural", rule: "Plural de LO y L'.", ex: ["gli studenti", "gli amici", "gli zaini"] }
+                { art: "IL", type: "Singular", rule: "Uso general con consonantes.", ex: ["il cane", "il sole"] },
+                { art: "LO", type: "Singular", rule: "Con Z, S+consonante, GN, PS.", ex: ["lo zaino", "lo studente"] },
+                { art: "L'", type: "Singular", rule: "Con palabras que empiezan por vocal.", ex: ["l'amico", "l'oro"] },
+                { art: "I", type: "Plural", rule: "Plural de IL.", ex: ["i cani", "i libri"] },
+                { art: "GLI", type: "Plural", rule: "Plural de LO y L'.", ex: ["gli zaini", "gli amici"] }
             ],
             F: [
-                { art: "LA", type: "Singular", rule: "Para palabras femeninas que empiezan con consonante.", ex: ["la casa", "la ragazza", "la sedia"] },
-                { art: "L'", type: "Singular", rule: "Para palabras femeninas que empiezan con vocal.", ex: ["l'amica", "l'isola", "l'erba"] },
-                { art: "LE", type: "Plural", rule: "Plural de LA y L'.", ex: ["le case", "le amiche", "le sedie"] }
+                { art: "LA", type: "Singular", rule: "Uso general femenino.", ex: ["la casa", "la vita"] },
+                { art: "L'", type: "Singular", rule: "Femenino con vocal.", ex: ["l'ora", "l'idea"] },
+                { art: "LE", type: "Plural", rule: "Plural de LA y L'.", ex: ["le case", "le ore"] }
             ]
         };
 
-        let currentGender = 'M';
-
         function switchGender(g) {
-            currentGender = g;
             document.getElementById('tabM').className = g === 'M' ? 'tab active-m' : 'tab';
             document.getElementById('tabF').className = g === 'F' ? 'tab active-f' : 'tab';
-            document.getElementById('rulePanel').style.display = 'none';
-            renderArticles();
+            renderArticles(g);
         }
 
-        function renderArticles() {
+        function renderArticles(g) {
             const grid = document.getElementById('artGrid');
             grid.innerHTML = '';
-            data[currentGender].forEach((item, index) => {
+            artData[g].forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'art-card';
-                card.style.color = currentGender === 'M' ? 'var(--masculino)' : 'var(--femenino)';
-                card.innerHTML = `<span class="art-name">${item.art}</span><span class="art-type">${item.type}</span>`;
-                card.onclick = () => showRule(item, card);
+                card.style.color = g === 'M' ? 'var(--masculino)' : 'var(--femenino)';
+                card.innerHTML = `<span style="font-size:1.5rem; font-weight:900; display:block">${item.art}</span><small>${item.type}</small>`;
+                card.onclick = () => {
+                    document.querySelectorAll('.art-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    const rp = document.getElementById('rulePanel');
+                    rp.style.display = 'block';
+                    rp.style.borderLeftColor = card.style.color;
+                    document.getElementById('ruleTitle').innerText = `Uso de "${item.art}"`;
+                    document.getElementById('ruleText').innerText = item.rule;
+                    document.getElementById('ruleExamples').innerHTML = item.ex.map(e => `<span class="example-tag">${e}</span>`).join('');
+                };
                 grid.appendChild(card);
             });
         }
 
-        function showRule(item, card) {
-            // UI de selección
-            document.querySelectorAll('.art-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
+        // --- LÓGICA MISCELATORE ---
+        const preps = ["DI", "A", "DA", "IN", "SU"];
+        const arts = ["IL", "LO", "LA", "L'", "I", "GLI", "LE"];
+        
+        const fusions = {
+            "DI": { "IL": "DEL", "LO": "DELLO", "LA": "DELLA", "L'": "DELL'", "I": "DEI", "GLI": "DEGLI", "LE": "DELLE", ex: "el libro del profesor" },
+            "A": { "IL": "AL", "LO": "ALLO", "LA": "ALLA", "L'": "ALL'", "I": "AI", "GLI": "AGLI", "LE": "ALLE", ex: "voy al cine" },
+            "DA": { "IL": "DAL", "LO": "DALLO", "LA": "DALLA", "L'": "DALL'", "I": "DAI", "GLI": "DAGLI", "LE": "DALLE", ex: "vengo del médico" },
+            "IN": { "IL": "NEL", "LO": "NELLO", "LA": "NELLA", "L'": "NELL'", "I": "NEI", "GLI": "NEGLI", "LE": "NELLE", ex: "en el cajón" },
+            "SU": { "IL": "SUL", "LO": "SULLO", "LA": "SULLA", "L'": "SULL'", "I": "SUI", "GLI": "SUGLI", "LE": "SULLE", ex: "sobre la mesa" }
+        };
 
-            // Mostrar Panel
-            const panel = document.getElementById('rulePanel');
-            panel.style.display = 'block';
-            panel.style.borderLeftColor = currentGender === 'M' ? 'var(--masculino)' : 'var(--femenino)';
+        let selectedPrep = "DI";
+        let selectedArt = "IL";
+
+        function renderMixer() {
+            const pCol = document.getElementById('prepCol');
+            const aCol = document.getElementById('artCol');
             
-            document.getElementById('ruleTitle').innerText = `Artículo "${item.art}"`;
-            document.getElementById('ruleText').innerText = item.rule;
-            
-            const exDiv = document.getElementById('ruleExamples');
-            exDiv.innerHTML = item.ex.map(e => `<span class="example-tag">${e}</span>`).join('');
+            pCol.innerHTML = '<div class="column-label">Preposición</div>';
+            preps.forEach(p => {
+                const b = document.createElement('button');
+                b.className = `mix-btn ${selectedPrep === p ? 'selected' : ''}`;
+                b.innerText = p;
+                b.onclick = () => { selectedPrep = p; updateFusion(); renderMixer(); };
+                pCol.appendChild(b);
+            });
+
+            aCol.innerHTML = '<div class="column-label">Artículo</div>';
+            arts.forEach(a => {
+                const b = document.createElement('button');
+                b.className = `mix-btn ${selectedArt === a ? 'selected' : ''}`;
+                b.innerText = a;
+                b.onclick = () => { selectedArt = a; updateFusion(); renderMixer(); };
+                aCol.appendChild(b);
+            });
+            updateFusion();
         }
 
-        renderArticles();
+        function updateFusion() {
+            const res = document.getElementById('fusionResult');
+            res.style.display = 'block';
+            const word = fusions[selectedPrep][selectedArt];
+            document.getElementById('fFormula').innerText = `${selectedPrep} + ${selectedArt}`;
+            document.getElementById('fWord').innerText = word;
+            
+            // Traducción rápida de ejemplos según la preposición
+            const exMap = { "DI":"del", "A":"al", "DA":"del/desde el", "IN":"en el", "SU":"sobre el" };
+            document.getElementById('fExample').innerText = `Ejemplo: Usado para indicar "${exMap[selectedPrep]} ..."`;
+        }
+
+        // Inicio
+        switchGender('M');
+        renderMixer();
     </script>
 </body>
 </html>
